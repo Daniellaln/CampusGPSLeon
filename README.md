@@ -2,7 +2,7 @@
 
 Daniella Leon · Laboratorio 13 · Fase 1
 
-Solicitud de ubicación precisa o aproximada durante el uso de la app.
+Mapa y posición del dispositivo.
 
 ## Ejecutar
 

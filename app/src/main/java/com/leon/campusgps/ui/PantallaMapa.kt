@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 @Composable
 fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
     val estado by vm.estado.collectAsStateWithLifecycle()
+    val lugares by vm.lugares.collectAsStateWithLifecycle()
     val contexto = LocalContext.current
     val lanzador = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { resultado ->
         if (resultado.values.any { it }) vm.buscar() else vm.permisoDenegado()
@@ -39,6 +40,14 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
         BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
         val compacta = maxHeight < 430.dp
         Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            if (estado !is UbicacionUi.Error) {
+            if (mostrarMapa) MapaUbicacion(
+                estado = estado,
+                lugares = lugares,
+                seleccionado = null,
+                modifier = Modifier.fillMaxWidth().weight(1f),
+            )
+            }
             Button(onClick = ::alPulsar, enabled = estado != UbicacionUi.Buscando,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
                 Text(if (estado == UbicacionUi.Buscando) "Buscando…" else "Obtener mi ubicación")

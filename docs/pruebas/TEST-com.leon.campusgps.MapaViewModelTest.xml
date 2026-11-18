@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.leon.campusgps.MapaViewModelTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-18T06:23:15.463Z" hostname="WILLIAM" time="0.225">
+  <properties/>
+  <testcase name="sePuedeReintentarTrasUnError" classname="com.leon.campusgps.MapaViewModelTest" time="0.194"/>
+  <testcase name="denegacionTieneTipoYMensaje" classname="com.leon.campusgps.MapaViewModelTest" time="0.001"/>
+  <testcase name="errorInesperadoPermiteReintentar" classname="com.leon.campusgps.MapaViewModelTest" time="0.005"/>
+  <testcase name="sinPlayServicesNoSePideLaPosicion" classname="com.leon.campusgps.MapaViewModelTest" time="0.004"/>
+  <testcase name="volverATocarElMismoLugarSolicitaRecentraLaCamara" classname="com.leon.campusgps.MapaViewModelTest" time="0.002"/>
+  <testcase name="inicialmenteHayCincoLugaresSinDistancia" classname="com.leon.campusgps.MapaViewModelTest" time="0.003"/>
+  <testcase name="seleccionInvalidaNoAlteraElEstado" classname="com.leon.campusgps.MapaViewModelTest" time="0.003"/>
+  <testcase name="gpsApagadoEsUnErrorRecuperable" classname="com.leon.campusgps.MapaViewModelTest" time="0.004"/>
+  <testcase name="pulsacionesRepetidasNoDuplicanSolicitudes" classname="com.leon.campusgps.MapaViewModelTest" time="0.005"/>
+  <testcase name="permisoRevocadoSeClasifica" classname="com.leon.campusgps.MapaViewModelTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,40 @@
+--------- beginning of main
+11-18 06:25:57.971  8241  8241 D CampusGPSMapa: Estilo OpenFreeMap cargado
+11-18 06:25:58.029  8241  8241 D CampusGPSMapa: Marcadores campus=5, propio=false, cercano=null
+11-18 06:26:16.863  8241  8241 D CampusGPSMapa: Estilo OpenFreeMap cargado
+11-18 06:26:16.916  8241  8241 D CampusGPSMapa: Marcadores campus=5, propio=false, cercano=null
+11-18 06:26:21.058  8241  8241 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 06:26:21.704  8241  8241 D CampusGPSMapa: Cámara quieta zoom=16.0, puntos visibles=20
+11-18 06:26:26.106  8241  8241 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 06:26:26.106  8241  8241 D CampusGPSMapa: Cámara seleccionada id=2, zoom=17
+11-18 06:26:26.794  8241  8241 D CampusGPSMapa: Cámara quieta zoom=17.0, puntos visibles=2
+11-18 06:26:29.636  8241  8241 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 06:26:29.637  8241  8241 D CampusGPSMapa: Cámara seleccionada id=1, zoom=17
+11-18 06:26:30.178  8241  8241 D CampusGPSMapa: Cámara quieta zoom=17.0, puntos visibles=2
+11-18 06:26:31.315  8241  8241 D CampusGPSMapa: Estilo OpenFreeMap cargado
+11-18 06:26:31.347  8241  8241 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 06:26:31.348  8241  8241 D CampusGPSMapa: Cámara seleccionada id=1, zoom=17
+11-18 06:26:32.405  8241  8241 D CampusGPSMapa: Cámara quieta zoom=17.0, puntos visibles=1
+11-18 06:26:34.584  8241  8241 D CampusGPSMapa: Estilo OpenFreeMap cargado
+11-18 06:26:34.624  8241  8241 D CampusGPSMapa: Cámara quieta zoom=17.0, puntos visibles=0
+11-18 06:26:34.626  8241  8241 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 06:26:34.626  8241  8241 D CampusGPSMapa: Cámara seleccionada id=1, zoom=17
+11-18 06:26:35.646  8241  8241 D CampusGPSMapa: Cámara quieta zoom=17.0, puntos visibles=2
+11-18 06:26:45.972  8241  8241 D CampusGPSMapa: Estilo OpenFreeMap cargado
+11-18 06:26:46.030  8241  8241 D CampusGPSMapa: Cámara quieta zoom=12.0, puntos visibles=0
+11-18 06:26:46.042  8241  8241 D CampusGPSMapa: Marcadores campus=5, propio=false, cercano=1
+11-18 06:26:46.042  8241  8241 D CampusGPSMapa: Cámara seleccionada id=1, zoom=17
+11-18 06:26:47.904  8241  8241 D CampusGPSMapa: Cámara quieta zoom=17.0, puntos visibles=2
+11-18 06:26:50.110  8241  8241 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=4
+11-18 06:26:50.721  8241  8241 D CampusGPSMapa: Cámara quieta zoom=16.0, puntos visibles=8
+11-18 06:26:55.485  8241  8241 D CampusGPSMapa: Marcadores campus=5, propio=false, cercano=4
+11-18 06:27:00.118  8241  8241 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 06:27:00.727  8241  8241 D CampusGPSMapa: Cámara quieta zoom=16.0, puntos visibles=5
+11-18 06:29:00.870  8241  8241 D CampusGPSMapa: Marcador tocado id=2
+11-18 06:29:00.905  8241  8241 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 06:29:00.905  8241  8241 D CampusGPSMapa: Cámara seleccionada id=2, zoom=17
+11-18 06:29:01.420  8241  8241 D CampusGPSMapa: Cámara quieta zoom=17.0, puntos visibles=2
+11-18 06:29:06.108  8241  8241 D CampusGPSMapa: Marcadores campus=5, propio=false, cercano=1
+11-18 06:29:10.137  8241  8241 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 06:29:10.756  8241  8241 D CampusGPSMapa: Cámara quieta zoom=16.0, puntos visibles=5
+11-18 06:31:35.936  8241  8241 D CampusGPSMapa: Cámara quieta zoom=15.0, puntos visibles=6

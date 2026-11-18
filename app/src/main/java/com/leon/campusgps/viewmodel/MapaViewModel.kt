@@ -7,6 +7,8 @@ import com.leon.campusgps.data.UbicacionRepository
 import com.leon.campusgps.model.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import com.leon.campusgps.util.distanciaMetros
+import android.util.Log
 
 class MapaViewModel(
     private val ubicacionRepo: UbicacionRepository,
@@ -23,6 +25,7 @@ class MapaViewModel(
         viewModelScope.launch {
             ubicacionRepo.obtenerPosicion()
                 .onSuccess { posicion ->
+                    actualizarDistancias(posicion)
                     _estado.value = UbicacionUi.Lista(posicion)
                 }
                 .onFailure { _estado.value = errorDe(it) }
@@ -31,6 +34,13 @@ class MapaViewModel(
 
     fun permisoDenegado() {
         _estado.value = UbicacionUi.Error("Sin permiso de ubicación no puedo mostrar dónde estás")
+    }
+
+    private fun actualizarDistancias(posicion: Posicion) {
+        _lugares.value = lugaresRepo.obtenerLugares()
+            .map { LugarConDistancia(it, distanciaMetros(posicion, it)) }
+            .sortedBy { it.metros }
+        Log.d("CampusGPS", _lugares.value.joinToString { "${it.lugar.nombre}: ${it.metros} m" })
     }
 
     private fun errorDe(e: Throwable) = UbicacionUi.Error(

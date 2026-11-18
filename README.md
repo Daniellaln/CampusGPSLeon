@@ -2,7 +2,7 @@
 
 Daniella Leon · Laboratorio 13 · Fase 1
 
-Cinco lugares del campus con nombre y categoría.
+Distancias calculadas y ordenadas desde la posición actual.
 
 ## Ejecutar
 

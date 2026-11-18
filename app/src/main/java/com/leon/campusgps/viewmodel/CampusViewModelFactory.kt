@@ -10,6 +10,6 @@ class CampusViewModelFactory(context: Context) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass.isAssignableFrom(MapaViewModel::class.java))
-        return MapaViewModel(UbicacionRepositoryGoogle(appContext), LugaresRepositoryLocal()) as T
+        return MapaViewModel(UbicacionRepositoryGoogle(appContext), LugaresRepositoryLocal(), PreferenciasDataStore(appContext)) as T
     }
 }

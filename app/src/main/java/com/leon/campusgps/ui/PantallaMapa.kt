@@ -34,6 +34,9 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
     val radio by vm.radio.collectAsStateWithLifecycle()
     val contorno by vm.contornoRadio.collectAsStateWithLifecycle()
     val seguimiento by vm.seguimiento.collectAsStateWithLifecycle()
+    val ultimoLugar by vm.ultimoLugar.collectAsStateWithLifecycle()
+    val avisos = remember { SnackbarHostState() }
+    LaunchedEffect(vm) { vm.avisos.collect { avisos.showSnackbar(it) } }
     var seguirTrasPermiso by remember { mutableStateOf(false) }
     val seleccionado by vm.seleccionado.collectAsStateWithLifecycle()
     val revision by vm.revisionSeleccion.collectAsStateWithLifecycle()
@@ -62,7 +65,7 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
         ciclo.addObserver(observador)
         onDispose { ciclo.removeObserver(observador) }
     }
-    Scaffold(topBar = {
+    Scaffold(snackbarHost = { SnackbarHost(avisos) }, topBar = {
         TopAppBar(title = { Text("CampusGPS") }, colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             titleContentColor = MaterialTheme.colorScheme.onPrimary))
@@ -97,6 +100,9 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
                 if (seguimiento) vm.detenerSeguimiento()
                 else { seguirTrasPermiso = true; alPulsar() }
             }) { Text(if (seguimiento) "Detener seguimiento" else "Iniciar seguimiento") }
+            ultimoLugar?.let { lugar ->
+                TextButton(onClick = vm::volverAlUltimoLugar) { Text("Volver a ${lugar.nombre}") }
+            }
             when (val actual = estado) {
                 UbicacionUi.Inicial -> Text("Pulsa el botón para empezar", style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(4.dp))

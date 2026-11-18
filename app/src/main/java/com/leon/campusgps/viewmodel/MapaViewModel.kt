@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leon.campusgps.data.LugaresRepository
 import com.leon.campusgps.data.UbicacionRepository
+import com.leon.campusgps.data.PreferenciasRepository
+import com.leon.campusgps.data.PreferenciasEnMemoria
 import com.leon.campusgps.model.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -18,7 +20,8 @@ import com.leon.campusgps.data.SinPlayServicesException
 
 class MapaViewModel(
     private val ubicacionRepo: UbicacionRepository,
-    private val lugaresRepo: LugaresRepository
+    private val lugaresRepo: LugaresRepository,
+    private val preferenciasRepo: PreferenciasRepository = PreferenciasEnMemoria()
 ) : ViewModel() {
     private var seguimientoJob: Job? = null
     private var esperaInicialJob: Job? = null
@@ -55,12 +58,39 @@ class MapaViewModel(
     val seleccionado: StateFlow<Int?> = _seleccionado.asStateFlow()
     private val _revisionSeleccion = MutableStateFlow(0)
     val revisionSeleccion: StateFlow<Int> = _revisionSeleccion.asStateFlow()
+    private val _avisos = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val avisos = _avisos.asSharedFlow()
+    val ultimoLugar: StateFlow<Lugar?> = preferenciasRepo.ultimoLugarId.map { id ->
+        _lugares.value.firstOrNull { it.lugar.id == id }?.lugar
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    init {
+        viewModelScope.launch {
+            val id = preferenciasRepo.ultimoLugarId.first()
+            if (_revisionSeleccion.value == 0 && _lugares.value.any { it.lugar.id == id }) {
+                _seleccionado.value = id
+                _revisionSeleccion.value++
+            }
+        }
+    }
 
     fun seleccionar(id: Int?) {
         if (id != null && _lugares.value.none { it.lugar.id == id }) return
         _seleccionado.value = id
         // Permite volver al mismo marcador después de desplazar el mapa a mano.
         _revisionSeleccion.value++
+        if (id != null) viewModelScope.launch {
+            try { preferenciasRepo.guardarUltimoLugar(id) }
+            catch (cancelacion: CancellationException) { throw cancelacion }
+            catch (_: Exception) { _avisos.emit("No se pudo guardar el último lugar") }
+        }
+    }
+
+    fun volverAlUltimoLugar() {
+        ultimoLugar.value?.let { lugar ->
+            _categoria.value = CategoriaLugar.TODOS
+            seleccionar(lugar.id)
+        }
     }
 
     val masCercano: StateFlow<Lugar?> = lugaresFiltrados.map { lista ->

@@ -53,3 +53,19 @@ Pon botones Iniciar/Detener en la UI y pide permiso con el lanzador existente. O
 | Prompt que escribí | Qué respondió Gemini | Qué cambié o descarté | Por qué |
 |---|---|---|---|
 | 3. Seguimiento | Pendiente de ejecutar en Gemini; referencia disponible en este commit. | Se limpia el callback incluso si el registro termina después de cancelar; se detiene en foreground lifecycle. Retiré Log de Android del ViewModel al detectar que impedía probar el Flow en la JVM. | Evita suscripciones duplicadas y ubicación en segundo plano, y reduce dependencias de Android en el ViewModel. |
+
+## 4. Último lugar guardado
+
+```text
+Compórtate como un experto en DataStore, Kotlin Flow y MVVM. Ayúdame a guardar el último lugar seleccionado en CampusGPS después del seguimiento en vivo.
+
+Añade androidx.datastore:datastore-preferences:1.3.0. Crea PreferenciasRepository con un Flow<Int?> ultimoLugarId y una función suspend guardarUltimoLugar(id). Implementa PreferenciasDataStore con un delegado preferencesDataStore global sobre applicationContext, archivo campus_preferencias y clave ultimo_lugar_id. No crees múltiples DataStore para el mismo archivo. Conserva local.properties fuera de Git.
+
+Inyecta la interfaz en MapaViewModel mediante CampusViewModelFactory. Para las pruebas usa PreferenciasEnMemoria. Guarda al seleccionar un lugar válido y restaura el primero al abrir; si el ID ya no existe, ignóralo. La restauración tardía no debe sobrescribir una selección que el usuario acaba de hacer. Expón ultimoLugar como StateFlow y una acción volverAlUltimoLugar que abra Todo y lo seleccione, sin consultar DataStore desde un Composable.
+
+La UI debe ofrecer Volver a [nombre]. Si falla una escritura, muestra un aviso breve recuperable; propaga la cancelación. Comprueba guardar, crear otro ViewModel, recuperar, descartar un ID desconocido y volver al lugar estando en otra categoría. Además, selecciona un lugar en la app real, ciérrala por completo y vuelve a abrirla para comprobar persistencia.
+```
+
+| Prompt que escribí | Qué respondió Gemini | Qué cambié o descarté | Por qué |
+|---|---|---|---|
+| 4. Último lugar | Pendiente de ejecutar en Gemini; referencia disponible en este commit. | Inyección de interfaz, delegado único y restauración que respeta selecciones nuevas. | Guarda fuera de la UI y evita que una lectura tardía cambie una decisión del usuario. |

@@ -8,6 +8,8 @@ import com.leon.campusgps.model.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import com.leon.campusgps.util.distanciaMetros
+import com.leon.campusgps.util.contornoDelRadio
+import com.leon.campusgps.util.estaDentroDelRadio
 import android.util.Log
 import com.leon.campusgps.data.GpsApagadoException
 import com.leon.campusgps.data.SinPlayServicesException
@@ -22,9 +24,18 @@ class MapaViewModel(
     val lugares: StateFlow<List<LugarConDistancia>> = _lugares.asStateFlow()
     private val _categoria = MutableStateFlow(CategoriaLugar.TODOS)
     val categoria: StateFlow<CategoriaLugar> = _categoria.asStateFlow()
-    val lugaresFiltrados: StateFlow<List<LugarConDistancia>> = combine(lugares, categoria) { lista, filtro ->
-        lista.filter { filtro.incluye(it.lugar) }
+    private val _radio = MutableStateFlow(200)
+    val radio: StateFlow<Int> = _radio.asStateFlow()
+    val contornoRadio: StateFlow<List<Posicion>> = combine(estado, radio) { actual, metros ->
+        if (actual is UbicacionUi.Lista) contornoDelRadio(actual.posicion, metros) else emptyList()
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    val lugaresFiltrados: StateFlow<List<LugarConDistancia>> = combine(lugares, categoria, radio) { lista, filtro, metros ->
+        lista.filter { filtro.incluye(it.lugar) }.map { it.copy(dentroDelRadio = estaDentroDelRadio(it.metros, metros)) }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, _lugares.value)
+
+    fun cambiarRadio(metros: Int) {
+        if (metros in listOf(100, 200, 500)) _radio.value = metros
+    }
 
     fun filtrar(categoria: CategoriaLugar) {
         _categoria.value = categoria

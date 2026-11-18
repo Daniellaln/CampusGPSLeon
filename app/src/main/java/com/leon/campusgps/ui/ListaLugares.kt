@@ -33,6 +33,11 @@ fun ListaLugares(lugares: List<LugarConDistancia>, seleccionado: Int?, onClick: 
                     Column(Modifier.weight(1f)) {
                         Text(item.lugar.nombre, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium)
                         Text(item.lugar.categoria, color = Color(0xFF687785), style = MaterialTheme.typography.bodySmall)
+                        item.dentroDelRadio?.let { dentro ->
+                            Text(if (dentro) "Dentro del radio" else "Fuera del radio",
+                                color = if (dentro) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.labelSmall)
+                        }
                     }
                     Spacer(Modifier.width(8.dp))
                     Text(item.metros?.let(::formatearDistancia) ?: "Sin calcular", color = MaterialTheme.colorScheme.primary,

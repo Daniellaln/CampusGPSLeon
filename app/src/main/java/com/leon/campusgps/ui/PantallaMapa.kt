@@ -28,6 +28,8 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
     val estado by vm.estado.collectAsStateWithLifecycle()
     val lugares by vm.lugaresFiltrados.collectAsStateWithLifecycle()
     val categoria by vm.categoria.collectAsStateWithLifecycle()
+    val radio by vm.radio.collectAsStateWithLifecycle()
+    val contorno by vm.contornoRadio.collectAsStateWithLifecycle()
     val seleccionado by vm.seleccionado.collectAsStateWithLifecycle()
     val revision by vm.revisionSeleccion.collectAsStateWithLifecycle()
     val masCercano by vm.masCercano.collectAsStateWithLifecycle()
@@ -64,7 +66,8 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
                 modifier = Modifier.fillMaxWidth().weight(1f),
                 revisionSeleccion = revision,
                 onSeleccionar = vm::seleccionar,
-                masCercanoId = masCercano?.id
+                masCercanoId = masCercano?.id,
+                contornoRadio = contorno
             ) else Spacer(Modifier.fillMaxWidth().weight(1f))
             }
             Button(onClick = ::alPulsar, enabled = estado != UbicacionUi.Buscando,
@@ -94,6 +97,12 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
                 Text("Más cercano: ${lugar.nombre} (${metros?.let(::formatearDistancia) ?: "Sin calcular"})",
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                     style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center)
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf(100, 200, 500).forEach { metros ->
+                    FilterChip(selected = radio == metros, onClick = { vm.cambiarRadio(metros) },
+                        label = { Text("$metros m") })
+                }
             }
             ListaLugares(lugares, seleccionado, vm::seleccionar,
                 modifier = Modifier.fillMaxWidth().height(if (compacta) 96.dp else 280.dp), masCercanoId = masCercano?.id)

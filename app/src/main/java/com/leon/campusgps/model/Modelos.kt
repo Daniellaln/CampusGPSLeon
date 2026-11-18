@@ -11,7 +11,7 @@ data class Lugar(
 )
 
 // null indica que todavía no se ha obtenido la posición del dispositivo.
-data class LugarConDistancia(val lugar: Lugar, val metros: Float?)
+data class LugarConDistancia(val lugar: Lugar, val metros: Float?, val dentroDelRadio: Boolean? = null)
 
 enum class CategoriaLugar(val etiqueta: String) {
     TODOS("Todo"), ESTUDIO("Estudio"), COMIDA("Comida"), EVENTOS("Eventos"), SERVICIOS("Servicios");

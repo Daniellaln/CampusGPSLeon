@@ -29,6 +29,8 @@ import org.maplibre.android.maps.MapView
 import org.maplibre.android.maps.Style
 import org.maplibre.android.style.expressions.Expression.get
 import org.maplibre.android.style.layers.CircleLayer
+import org.maplibre.android.style.layers.FillLayer
+import org.maplibre.android.style.layers.LineLayer
 import org.maplibre.android.style.layers.PropertyFactory.*
 import org.maplibre.android.style.sources.GeoJsonSource
 import org.json.JSONArray
@@ -44,7 +46,8 @@ fun MapaUbicacion(
     modifier: Modifier = Modifier,
     revisionSeleccion: Int = 0,
     onSeleccionar: (Int) -> Unit = {},
-    masCercanoId: Int? = null
+    masCercanoId: Int? = null,
+    contornoRadio: List<Posicion> = emptyList()
 ) {
     val contexto = LocalContext.current
     val ciclo = LocalLifecycleOwner.current.lifecycle
@@ -119,6 +122,9 @@ fun MapaUbicacion(
                 encontrado != null
             }
             actual.setStyle(Style.Builder().fromUri(ESTILO_LIBRE)) { estilo ->
+                estilo.addSource(GeoJsonSource("radio-datos", "{\"type\":\"FeatureCollection\",\"features\":[]}"))
+                estilo.addLayer(FillLayer("radio-relleno", "radio-datos").withProperties(fillColor("#168B7A"), fillOpacity(.12f)))
+                estilo.addLayer(LineLayer("radio-borde", "radio-datos").withProperties(lineColor("#168B7A"), lineWidth(1.5f), lineOpacity(.7f)))
                 estilo.addSource(GeoJsonSource("campus-datos", "{\"type\":\"FeatureCollection\",\"features\":[]}"))
                 estilo.addLayer(CircleLayer("campus-puntos", "campus-datos").withProperties(
                     circleColor(get("color")), circleRadius(get("radio")),
@@ -165,6 +171,15 @@ fun MapaUbicacion(
         actual.style?.getSourceAs<GeoJsonSource>("campus-datos")?.setGeoJson(
             JSONObject().put("type", "FeatureCollection").put("features", puntos).toString())
         Log.d("CampusGPSMapa", "Marcadores campus=${lugaresVisibles.size}, propio=${estado is UbicacionUi.Lista}, cercano=$masCercanoId")
+    }
+
+    LaunchedEffect(mapa, contornoRadio) {
+        val coordenadas = JSONArray()
+        contornoRadio.forEach { coordenadas.put(JSONArray().put(it.longitud).put(it.latitud)) }
+        val geojson = if (contornoRadio.isEmpty()) "{\"type\":\"FeatureCollection\",\"features\":[]}" else
+            JSONObject().put("type", "Feature").put("properties", JSONObject())
+                .put("geometry", JSONObject().put("type", "Polygon").put("coordinates", JSONArray().put(coordenadas))).toString()
+        mapa?.style?.getSourceAs<GeoJsonSource>("radio-datos")?.setGeoJson(geojson)
     }
 
     LaunchedEffect(mapa, estado) {

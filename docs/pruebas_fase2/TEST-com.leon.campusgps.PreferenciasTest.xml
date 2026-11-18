@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.leon.campusgps.PreferenciasTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-18T13:11:30.729Z" hostname="WILLIAM" time="0.014">
+<testsuite name="com.leon.campusgps.PreferenciasTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-18T13:35:30.886Z" hostname="WILLIAM" time="0.018">
   <properties/>
-  <testcase name="elTemaSeConservaAlCrearOtroViewModel" classname="com.leon.campusgps.PreferenciasTest" time="0.005"/>
-  <testcase name="unIdAntiguoQueYaNoExisteNoSeRestaura" classname="com.leon.campusgps.PreferenciasTest" time="0.002"/>
+  <testcase name="elTemaSeConservaAlCrearOtroViewModel" classname="com.leon.campusgps.PreferenciasTest" time="0.008"/>
+  <testcase name="unIdAntiguoQueYaNoExisteNoSeRestaura" classname="com.leon.campusgps.PreferenciasTest" time="0.003"/>
   <testcase name="volverAlUltimoLugarAbreLaCategoriaNecesaria" classname="com.leon.campusgps.PreferenciasTest" time="0.003"/>
   <testcase name="seleccionarPersisteYUnNuevoViewModelRecuperaElLugar" classname="com.leon.campusgps.PreferenciasTest" time="0.004"/>
   <system-out><![CDATA[]]></system-out>

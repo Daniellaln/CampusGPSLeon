@@ -159,6 +159,8 @@ Muestra una comparación de fase 1 y fase 2 con capturas reales una al lado de l
 
 Mantén PROMPTS.md como guía única, con estos nueve bloques en orden y una tabla de prompt, respuesta de Gemini, adaptación y motivo. El título es Prompts y la introducción: Estos prompts se pueden utilizar uno por uno siguiendo este orden para replicar los resultados. Si todavía no se ejecutaron en Gemini, indícalo y no fabriques respuestas. Todos los recursos deben encontrarse en esta repo: imágenes en app/src/main/res/drawable-nodpi, vectores en drawable, originales en docs/recursos. No remitas a carpetas privadas del PC ni a descargas inexistentes.
 
+Antes del cierre estabiliza el contraste nocturno del cristal: la mezcla del shader debe usar max(.17 + mate*.68, noche*.86), conservando las nueve muestras y alfa .97. Así el texto claro se mantiene legible aunque la imagen bajo el control contenga zonas claras. Comprueba el mismo filtro en oscuro vertical y horizontal; no cambies la interfaz diurna.
+
 Documenta pruebas ejecutadas y sus límites en docs/VERIFICACION.md; deja la guía de archivos por avance en docs/GUIA_CODIGO.md y los tokens de diseño en DESIGN.md y .impeccable/design.json. Conserva la procedencia de la ilustración. Verifica enlaces, archivos necesarios y ausencia de .git, cachés, local.properties o claves en las carpetas de entrega. No garantices un porcentaje exacto de reproducción por otro modelo; el código, las capturas, recursos y especificaciones concretas son la referencia.
 ```
 

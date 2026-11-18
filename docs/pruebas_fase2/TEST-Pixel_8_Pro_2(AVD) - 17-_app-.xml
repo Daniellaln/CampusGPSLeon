@@ -1,22 +1,22 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<testsuites tests="12" failures="0" errors="0" skipped="0" time="25.919" timestamp="2026-11-18T13:01:30" hostname="localhost">
-  <testsuite name="com.leon.campusgps.CampusInstrumentadoTest" tests="12" failures="0" errors="0" skipped="0" time="24.614" timestamp="2026-11-18T13:01:30" hostname="localhost">
+<testsuites tests="12" failures="0" errors="0" skipped="0" time="19.62" timestamp="2026-11-18T13:26:31" hostname="localhost">
+  <testsuite name="com.leon.campusgps.CampusInstrumentadoTest" tests="12" failures="0" errors="0" skipped="0" time="18.922" timestamp="2026-11-18T13:26:31" hostname="localhost">
     <properties>
       <property name="device" value="Pixel_8_Pro_2(AVD) - 17" />
       <property name="flavor" value="" />
       <property name="project" value=":app" />
     </properties>
-    <testcase name="hojaSeExpandeParaMostrarLosCincoLugares" classname="com.leon.campusgps.CampusInstrumentadoTest" time="3.682" />
-    <testcase name="preferenciasSeCompartenEntreAdaptadoresReales" classname="com.leon.campusgps.CampusInstrumentadoTest" time="1.706" />
-    <testcase name="distanciaCeroEnElMismoPunto" classname="com.leon.campusgps.CampusInstrumentadoTest" time="1.4" />
-    <testcase name="botonMasCercanoSeleccionaLaBiblioteca" classname="com.leon.campusgps.CampusInstrumentadoTest" time="2.065" />
-    <testcase name="filtroYRadioCambianLaMismaListaQueElMapa" classname="com.leon.campusgps.CampusInstrumentadoTest" time="3.51" />
-    <testcase name="sinPlayServicesNoOfreceReintentar" classname="com.leon.campusgps.CampusInstrumentadoTest" time="1.645" />
-    <testcase name="distanciasDelPuntoBaseSeOrdenanCorrectamente" classname="com.leon.campusgps.CampusInstrumentadoTest" time="1.752" />
-    <testcase name="nuevaUbicacionCambiaOrdenYCercano" classname="com.leon.campusgps.CampusInstrumentadoTest" time="1.569" />
-    <testcase name="masCercanoEstaDeshabilitadoSinUbicacion" classname="com.leon.campusgps.CampusInstrumentadoTest" time="1.635" />
-    <testcase name="errorSinPermisoOfreceAbrirAjustes" classname="com.leon.campusgps.CampusInstrumentadoTest" time="1.67" />
-    <testcase name="errorGPSOfreceReintentar" classname="com.leon.campusgps.CampusInstrumentadoTest" time="2.097" />
-    <testcase name="tocarLaTarjetaSeleccionaSuId" classname="com.leon.campusgps.CampusInstrumentadoTest" time="1.883" />
+    <testcase name="hojaSeExpandeParaMostrarLosCincoLugares" classname="com.leon.campusgps.CampusInstrumentadoTest" time="2.492" />
+    <testcase name="preferenciasSeCompartenEntreAdaptadoresReales" classname="com.leon.campusgps.CampusInstrumentadoTest" time="1.348" />
+    <testcase name="distanciaCeroEnElMismoPunto" classname="com.leon.campusgps.CampusInstrumentadoTest" time="1.26" />
+    <testcase name="botonMasCercanoSeleccionaLaBiblioteca" classname="com.leon.campusgps.CampusInstrumentadoTest" time="1.428" />
+    <testcase name="filtroYRadioCambianLaMismaListaQueElMapa" classname="com.leon.campusgps.CampusInstrumentadoTest" time="2.101" />
+    <testcase name="sinPlayServicesNoOfreceReintentar" classname="com.leon.campusgps.CampusInstrumentadoTest" time="1.272" />
+    <testcase name="distanciasDelPuntoBaseSeOrdenanCorrectamente" classname="com.leon.campusgps.CampusInstrumentadoTest" time="1.48" />
+    <testcase name="nuevaUbicacionCambiaOrdenYCercano" classname="com.leon.campusgps.CampusInstrumentadoTest" time="1.629" />
+    <testcase name="masCercanoEstaDeshabilitadoSinUbicacion" classname="com.leon.campusgps.CampusInstrumentadoTest" time="1.151" />
+    <testcase name="errorSinPermisoOfreceAbrirAjustes" classname="com.leon.campusgps.CampusInstrumentadoTest" time="1.184" />
+    <testcase name="errorGPSOfreceReintentar" classname="com.leon.campusgps.CampusInstrumentadoTest" time="1.23" />
+    <testcase name="tocarLaTarjetaSeleccionaSuId" classname="com.leon.campusgps.CampusInstrumentadoTest" time="2.347" />
   </testsuite>
 </testsuites>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.leon.campusgps.SeguimientoTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-18T13:11:30.748Z" hostname="WILLIAM" time="0.017">
+<testsuite name="com.leon.campusgps.SeguimientoTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-18T13:35:30.911Z" hostname="WILLIAM" time="0.026">
   <properties/>
-  <testcase name="unaSegundaPosicionLlegaSinVolverAPulsarBuscar" classname="com.leon.campusgps.SeguimientoTest" time="0.011"/>
-  <testcase name="iniciarDosVecesMantieneUnaSolaSuscripcionYPararLaLimpia" classname="com.leon.campusgps.SeguimientoTest" time="0.003"/>
-  <testcase name="sinPrimeraPosicionElTiempoDeEsperaTerminaConError" classname="com.leon.campusgps.SeguimientoTest" time="0.003"/>
+  <testcase name="unaSegundaPosicionLlegaSinVolverAPulsarBuscar" classname="com.leon.campusgps.SeguimientoTest" time="0.016"/>
+  <testcase name="iniciarDosVecesMantieneUnaSolaSuscripcionYPararLaLimpia" classname="com.leon.campusgps.SeguimientoTest" time="0.005"/>
+  <testcase name="sinPrimeraPosicionElTiempoDeEsperaTerminaConError" classname="com.leon.campusgps.SeguimientoTest" time="0.005"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

@@ -70,7 +70,7 @@ half4 main(float2 p) {
     base += fondo.eval(muestra + float2(-paso.x,paso.y)) * .08;
     base.r = mix(base.r, fondo.eval(muestra + n*escala*e*1.2).r, half(e*.35));
     base.b = mix(base.b, fondo.eval(muestra - n*escala*e*1.2).b, half(e*.35));
-    half3 color = mix(base.rgb,tinte,half(.17 + mate*.68));
+    half3 color = mix(base.rgb,tinte,half(max(.17 + mate*.68,noche*.86)));
     float luz = .25 + .65 * max(dot(n,normalize(float2(-1.0,-1.3))),0.0);
     float reflejo = (1.0-smoothstep(.0,1.5,abs(d+1.2))) * luz;
     color = min(color + half3(reflejo*.65),half3(1.0));

@@ -61,3 +61,63 @@
 11-18 13:25:27.186  6379  6379 D CampusGPS: Seguimiento registrado
 11-18 13:25:27.711  6379  6379 D CampusGPSMapa: Cámara quieta zoom=16.0, puntos visibles=6
 11-18 13:25:30.694  6379  6379 D CampusGPS: Seguimiento retirado
+11-18 13:36:57.974  8228  8228 D CampusGPSMapa: Estilo OpenFreeMap cargado
+11-18 13:36:57.982  8228  8228 D CampusGPSMapa: Marcadores campus=5, propio=false, cercano=null
+11-18 13:37:18.935  8228  8228 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 13:37:18.975  8228  8228 D CampusGPSMapa: Punto nativo activo, precisión=5.0
+11-18 13:37:18.992  8228  8228 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 13:37:19.532  8228  8228 D CampusGPSMapa: Cámara quieta zoom=16.0, puntos visibles=6
+11-18 13:37:30.999  8228  8228 D CampusGPSMapa: Marcadores campus=2, propio=true, cercano=1
+11-18 13:37:33.810  8228  8228 D CampusGPSMapa: Marcadores campus=2, propio=true, cercano=1
+11-18 13:37:46.824  8228  8228 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 13:37:49.584  8228  8228 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 13:37:57.180  8228  8228 D CampusGPS: Seguimiento registrado
+11-18 13:37:57.731  8228  8228 D CampusGPSMapa: Cámara quieta zoom=16.0, puntos visibles=6
+11-18 13:38:00.858  8228  8228 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=4
+11-18 13:38:00.859  8228  8228 D CampusGPSMapa: Punto nativo activo, precisión=5.0
+11-18 13:38:01.386  8228  8228 D CampusGPSMapa: Cámara quieta zoom=16.0, puntos visibles=12
+11-18 13:38:06.541  8228  8228 D CampusGPS: Seguimiento retirado
+11-18 13:38:16.187  8228  8228 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=4
+11-18 13:38:16.187  8228  8228 D CampusGPSMapa: Cámara seleccionada id=2, zoom=17
+11-18 13:38:16.717  8228  8228 D CampusGPSMapa: Cámara quieta zoom=17.0, puntos visibles=2
+11-18 13:38:18.202  8940  8940 D CampusGPSMapa: Estilo OpenFreeMap cargado
+11-18 13:38:18.204  8940  8940 D CampusGPSMapa: Marcadores campus=5, propio=false, cercano=null
+11-18 13:38:18.204  8940  8940 D CampusGPSMapa: Cámara seleccionada id=2, zoom=17
+11-18 13:38:18.220  8940  8940 D CampusGPSMapa: Marcadores campus=5, propio=false, cercano=null
+11-18 13:38:18.719  8940  8940 D CampusGPSMapa: Cámara quieta zoom=17.0, puntos visibles=4
+11-18 13:38:29.696  8940  8940 D CampusGPSMapa: Marcadores campus=5, propio=false, cercano=null
+11-18 13:38:33.962  8940  8940 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 13:38:34.014  8940  8940 D CampusGPSMapa: Punto nativo activo, precisión=5.0
+11-18 13:38:34.194  8940  8940 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 13:38:34.536  8940  8940 D CampusGPSMapa: Cámara quieta zoom=16.0, puntos visibles=6
+11-18 13:38:40.928  8940  8940 D CampusGPSMapa: Estilo OpenFreeMap cargado
+11-18 13:38:40.935  8940  8940 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 13:38:40.941  8940  8940 D CampusGPSMapa: Punto nativo activo, precisión=5.0
+11-18 13:38:40.947  8940  8940 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 13:38:47.075  8940  8940 D CampusGPSMapa: Estilo OpenFreeMap cargado
+11-18 13:38:47.296  8940  8940 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 13:38:47.308  8940  8940 D CampusGPSMapa: Punto nativo activo, precisión=5.0
+11-18 13:38:47.320  8940  8940 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 13:38:52.911  8940  8940 D CampusGPSMapa: Estilo OpenFreeMap cargado
+11-18 13:38:52.936  8940  8940 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 13:38:52.956  8940  8940 D CampusGPSMapa: Punto nativo activo, precisión=5.0
+11-18 13:38:53.051  8940  8940 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 13:38:53.517  8940  8940 D CampusGPSMapa: Estilo OpenFreeMap cargado
+11-18 13:38:53.538  8940  8940 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 13:38:53.549  8940  8940 D CampusGPSMapa: Punto nativo activo, precisión=5.0
+11-18 13:38:53.555  8940  8940 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 13:38:54.064  8940  8940 D CampusGPSMapa: Cámara quieta zoom=16.0, puntos visibles=6
+11-18 13:38:59.807  8940  8940 D CampusGPSMapa: Estilo OpenFreeMap cargado
+11-18 13:38:59.820  8940  8940 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 13:38:59.833  8940  8940 D CampusGPSMapa: Punto nativo activo, precisión=5.0
+11-18 13:38:59.850  8940  8940 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 13:39:09.171  8940  8940 D CampusGPSMapa: Estilo OpenFreeMap cargado
+11-18 13:39:09.173  8940  8940 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 13:39:09.178  8940  8940 D CampusGPSMapa: Punto nativo activo, precisión=5.0
+11-18 13:39:09.199  8940  8940 D CampusGPSMapa: Marcadores campus=5, propio=true, cercano=1
+11-18 13:39:09.203  8940  8940 D CampusGPSMapa: Punto nativo activo, precisión=5.0
+11-18 13:39:14.509  8940  8940 D CampusGPSMapa: Cámara quieta zoom=16.0, puntos visibles=6
+11-18 13:39:19.751  8940  8940 D CampusGPSMapa: Cámara quieta zoom=16.0, puntos visibles=6
+11-18 13:39:24.067  8940  8940 D CampusGPS: Seguimiento registrado
+11-18 13:39:24.596  8940  8940 D CampusGPSMapa: Cámara quieta zoom=16.0, puntos visibles=6
+11-18 13:39:28.015  8940  8940 D CampusGPS: Seguimiento retirado

@@ -26,6 +26,8 @@ class MapaViewModel(
     private var seguimientoJob: Job? = null
     private var esperaInicialJob: Job? = null
     private var ultimaPosicion: Posicion? = null
+    private val _posicion = MutableStateFlow<Posicion?>(null)
+    val posicion: StateFlow<Posicion?> = _posicion.asStateFlow()
     private var generacionSeguimiento = 0
     private val _seguimiento = MutableStateFlow(false)
     val seguimiento: StateFlow<Boolean> = _seguimiento.asStateFlow()
@@ -37,8 +39,8 @@ class MapaViewModel(
     val categoria: StateFlow<CategoriaLugar> = _categoria.asStateFlow()
     private val _radio = MutableStateFlow(200)
     val radio: StateFlow<Int> = _radio.asStateFlow()
-    val contornoRadio: StateFlow<List<Posicion>> = combine(estado, radio) { actual, metros ->
-        if (actual is UbicacionUi.Lista) contornoDelRadio(actual.posicion, metros) else emptyList()
+    val contornoRadio: StateFlow<List<Posicion>> = combine(posicion, radio) { actual, metros ->
+        actual?.let { contornoDelRadio(it, metros) } ?: emptyList()
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
     val lugaresFiltrados: StateFlow<List<LugarConDistancia>> = combine(lugares, categoria, radio) { lista, filtro, metros ->
         lista.filter { filtro.incluye(it.lugar) }.map { it.copy(dentroDelRadio = estaDentroDelRadio(it.metros, metros)) }
@@ -118,6 +120,7 @@ class MapaViewModel(
             ubicacionRepo.obtenerPosicion()
                 .onSuccess { posicion ->
                     ultimaPosicion = posicion
+                    _posicion.value = posicion
                     _seleccionado.value = null
                     actualizarDistancias(posicion)
                     _estado.value = UbicacionUi.Lista(posicion)
@@ -137,6 +140,7 @@ class MapaViewModel(
             try {
                 ubicacionRepo.observarPosiciones().collect { posicion ->
                     ultimaPosicion = posicion
+                    _posicion.value = posicion
                     actualizarDistancias(posicion)
                     _estado.value = UbicacionUi.Lista(posicion)
                     esperaInicialJob?.cancel()

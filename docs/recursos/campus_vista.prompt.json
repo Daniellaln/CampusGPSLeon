@@ -1,0 +1,6 @@
+{
+  "tool": "image_gen",
+  "prompt": "Use case: stylized-concept. Asset type: one production PNG illustration for the initial and empty states of a native Android campus locator called CampusGPS; NOT a UI mockup. Create a beautifully crafted small architectural model of a modern university campus: three ivory white contemporary buildings with clear glass windows, a small open courtyard and a few carefully formed trees, a restrained deep teal wayfinding pin integrated into the courtyard. Sophisticated premium 3D architectural product rendering, crisp bevels, subtle porcelain and translucent acrylic materials, daylight from the upper left, clean realistic ambient occlusion. Palette white, pale cool gray, muted seafoam and deep teal, with tiny soft blue reflections. Isometric three-quarter composition, complete single connected campus object centered with generous transparent margins, slightly wider than tall. The illustration must remain immediately readable at 160dp. A calm professional student app, not a toy, no faces, no people, no text, no letters, no logo, no watermark, no background plate, no frame or interface, no floating unrelated objects. Genuine transparent background; soft contact shadow may remain immediately below the object.",
+  "transparent_background": true,
+  "resource": "app/src/main/res/drawable-nodpi/campus_vista.png"
+}

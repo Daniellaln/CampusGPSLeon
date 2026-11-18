@@ -87,3 +87,25 @@ Comprueba persistencia del tema, estilos reales de día/noche, texto legible, pe
 | Prompt que escribí | Qué respondió Gemini | Qué cambié o descarté | Por qué |
 |---|---|---|---|
 | 5. Temas y punto azul | Pendiente de ejecutar en Gemini; referencia disponible en este commit. | Estilos de MapLibre y componente nativo con motor desactivado; las posiciones llegan desde el Repository. | Conserva la arquitectura y evita solicitudes de GPS duplicadas o una dependencia de facturación. |
+
+## 6. Diseño verde agua y cristal
+
+```text
+Compórtate como un experto en diseño de interfaces Android, Material 3, Kotlin y efectos gráficos AGSL. Necesito que rediseñes CampusGPS sin perder las seis mejoras anteriores ni MVVM. Trabaja en mejora-ia. Lee PRODUCT.md y toma como referencia el código del commit de diseño de esta rama, especialmente ui/CristalCampus.kt, ui/PantallaMapa.kt y ui/MapaUbicacion.kt. No cambies a Google Maps ni agregues claves.
+
+Usa estos colores exactos: claro primary #087768, fondo #F5FAF8, surface #FAFDFB, texto #142D29, secundario #44625C; oscuro primary #83DAC5, fondo #0D1B19, surface #12231F, texto #E1F1E9 y secundario #B0CDC0. Define también secondaryContainer verde y LocalContentColor para evitar títulos negros en oscuro. Usa tipografía Material 3 nativa, sin serif, sin beige, sin rosa y sin encabezados decorativos.
+
+Los recursos ya están en app/src/main/res: drawable-nodpi/campus_vista.png es una ilustración con transparencia para el estado inicial, no reemplaza el mapa. Todos los iconos ic_marca, ic_ubicacion, ic_filtros, ic_luna, ic_sol, ic_abajo, ic_flecha, ic_seguir, ic_pausa, ic_reciente, ic_estudio, ic_comida, ic_eventos, ic_servicios y demás están como VectorDrawable en drawable; los SVG originales y el prompt de la ilustración están en docs/recursos. Reutilízalos con painterResource(R.drawable...), no pongas emojis ni PNG aleatorios. Los archivos pueden obtenerse de la rama pública mejora-ia; no dependen de carpetas privadas del equipo.
+
+Composición: mapa real a pantalla completa; cabecera con marca de 30 dp, CampusGPS en 24 sp y botón circular de tema de 52 dp. Debajo, píldora de 214 por 52 dp con filtros, categoría y radio (Todo · 200 m). Los filtros se abren en ModalBottomSheet con FlowRow de cinco FilterChip, selector de radio 100/200/500 y botón Ver lugares. Evita tener todas las opciones permanentemente en el mapa. En el lateral inferior coloca Centrar mi ubicación de 60 dp y Seguir/Detener de 132 por 52 dp.
+
+En vertical usa BottomSheetScaffold nativo, radio superior 30 dp, peek de 370 dp inicial o 338 dp localizado, máximo 55% de la altura. El encabezado Cerca de ti, contador y flecha permiten expandir; Back lo contrae. Lista plana de filas de al menos 72 dp, icono de categoría, nombre, dentro/fuera y distancia; no anides tarjetas. El estado inicial muestra la ilustración de 92 dp, Activa tu ubicación y un único botón verde Obtener mi ubicación de 54 dp. Con posición muestra Ubicación lista/En vivo e Ir al más cercano. En ancho >=600 dp o alto <520 dp reemplaza la hoja por panel lateral de hasta 360 dp. Ajusta padding de cámara al espacio realmente visible. Deja los créditos del mapa visibles.
+
+El cristal debe refractar contenido real, no ser un rectángulo blanco borroso. Reproduce SuperficieCristal de ui/CristalCampus.kt: RuntimeShader desde API 33, BitmapShader alimentado por snapshot del MapView, distancia a rectángulo redondeado, refracción hacia el borde, ligera separación cromática y reflejo direccional. Captura solo al terminar cámara/carga, máximo ancho 720 px, intervalo mínimo 400 ms y una captura en vuelo. Mantén texto e iconos fuera del shader. Las zonas de lectura son mate; las píldoras y círculos dejan ver el mapa. Antes de API33 usa gradiente translúcido legible, sin afirmar que tiene refracción. Cada Button nativo conserva semántica, foco y estado disabled. Al presionar escala a .945 y vuelve con spring(.78,650). El selector de radio mueve una lente con spring(.78,500).
+
+Conserva la última posición al buscar de nuevo para no borrar el círculo ni el mapa. Usa locationComponent con motor desactivado y un punto GeoJSON azul de apoyo para GPU que no dibujan bien iconos bitmap. No inventes coordenadas ni precisión. Comprueba permisos, lista, filtros, persistencia, tema oscuro y ampliación de texto. Compila y ejecuta las pruebas antes de terminar.
+```
+
+| Prompt que escribí | Qué respondió Gemini | Qué cambié o descarté | Por qué |
+|---|---|---|---|
+| 6. Diseño | Pendiente de ejecutar en Gemini; implementación de referencia realizada con Codex. | Cristal propio sobre capturas reales, panel mate, iconos vectoriales propios e ilustración generada solo en el inicio. Se corrigieron títulos oscuros y punto tenue tras revisar capturas nativas. | Reduce opciones visibles y mantiene legibilidad y orientación sobre un mapa real. |

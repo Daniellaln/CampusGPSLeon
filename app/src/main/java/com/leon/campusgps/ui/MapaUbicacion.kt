@@ -1,6 +1,12 @@
 package com.leon.campusgps.ui
 
 import android.graphics.RectF
+import android.graphics.Bitmap
+import android.os.SystemClock
+import java.util.concurrent.atomic.AtomicBoolean
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
@@ -16,7 +22,14 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
+import kotlin.math.roundToInt
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -58,14 +71,26 @@ fun MapaUbicacion(
     onSeleccionar: (Int) -> Unit = {},
     masCercanoId: Int? = null,
     contornoRadio: List<Posicion> = emptyList(),
-    oscuro: Boolean = false
+    oscuro: Boolean = false,
+    posicionActual: Posicion? = (estado as? UbicacionUi.Lista)?.posicion,
+    seguirCamara: Boolean = true,
+    onInteraccion: () -> Unit = {},
+    onCaptura: (CapturaMapa?) -> Unit = {},
+    margenInferior: Dp = 0.dp,
+    margenDerecho: Dp = 0.dp,
+    margenSuperior: Dp = 0.dp
 ) {
     val contexto = LocalContext.current
+    val densidad = LocalDensity.current
     val ciclo = LocalLifecycleOwner.current.lifecycle
     val seleccionarActual by rememberUpdatedState(onSeleccionar)
+    val interaccionActual by rememberUpdatedState(onInteraccion)
+    val capturaActual by rememberUpdatedState(onCaptura)
+    val scope = rememberCoroutineScope()
+    var origen by remember { mutableStateOf(Offset.Zero) }
     var latitud by rememberSaveable { mutableDoubleStateOf(-12.0464) }
     var longitud by rememberSaveable { mutableDoubleStateOf(-77.0428) }
-    var zoom by rememberSaveable { mutableDoubleStateOf(12.0) }
+    var zoom by rememberSaveable { mutableDoubleStateOf(14.0) }
     var mapa by remember { mutableStateOf<MapLibreMap?>(null) }
     var errorMapa by remember { mutableStateOf(false) }
     var reintento by remember { mutableIntStateOf(0) }
@@ -81,6 +106,27 @@ fun MapaUbicacion(
         MapView(contexto, MapLibreMapOptions.createFromAttributes(contexto).textureMode(true)).apply {
             contentDescription = "Mapa del campus con ubicación y lugares"
             onCreate(null)
+        }
+    }
+    val activo = remember(vista) { AtomicBoolean(true) }
+    val capturando = remember(vista) { AtomicBoolean(false) }
+    var ultimaCaptura by remember { mutableLongStateOf(0) }
+    fun capturar(actual: MapLibreMap) {
+        if (!activo.get() || SystemClock.elapsedRealtime() - ultimaCaptura < 400 || !capturando.compareAndSet(false,true)) return
+        ultimaCaptura = SystemClock.elapsedRealtime()
+        val revision = versionEstilo
+        actual.snapshot { bitmap ->
+            capturando.set(false)
+            if (!activo.get() || revision != versionEstilo || vista.width == 0) return@snapshot
+            val tamano = IntSize(vista.width,vista.height)
+            val posicion = origen
+            scope.launch {
+                val pequena = withContext(Dispatchers.Default) {
+                    val ancho = minOf(720,bitmap.width)
+                    Bitmap.createScaledBitmap(bitmap,ancho,(bitmap.height*ancho/bitmap.width.toFloat()).toInt().coerceAtLeast(1),true)
+                }
+                if (activo.get() && revision == versionEstilo) capturaActual(CapturaMapa(pequena,tamano,posicion))
+            }
         }
     }
 
@@ -103,7 +149,7 @@ fun MapaUbicacion(
         ciclo.addObserver(observador)
         if (ciclo.currentState.isAtLeast(Lifecycle.State.STARTED)) iniciar()
         if (ciclo.currentState.isAtLeast(Lifecycle.State.RESUMED)) reanudar()
-        onDispose { ciclo.removeObserver(observador); detener(); vista.onDestroy() }
+        onDispose { activo.set(false); ciclo.removeObserver(observador); detener(); vista.onDestroy() }
     }
 
     DisposableEffect(vista) {
@@ -119,13 +165,15 @@ fun MapaUbicacion(
         errorMapa = false
         mapa = null
         puntoAzulActivo = false
+        capturaActual(null)
         vista.getMapAsync { actual ->
             if (mapaInicializado !== actual) {
             mapaInicializado = actual
             actual.cameraPosition = CameraPosition.Builder()
                 .target(LatLng(latitud, longitud)).zoom(zoom).build()
-            actual.uiSettings.isAttributionEnabled = true
+            actual.uiSettings.isAttributionEnabled = false
             actual.uiSettings.isLogoEnabled = false
+            actual.addOnCameraMoveStartedListener { razon -> if (razon == 1) interaccionActual() }
             actual.addOnMapClickListener { punto ->
                 val pixel = actual.projection.toScreenLocation(punto)
                 val margen = 24 * contexto.resources.displayMetrics.density
@@ -144,7 +192,7 @@ fun MapaUbicacion(
             }
             actual.setStyle(Style.Builder().fromUri(if (oscuro) ESTILO_OSCURO else ESTILO_LIBRE)) { estilo ->
                 estilo.addSource(GeoJsonSource("radio-datos", "{\"type\":\"FeatureCollection\",\"features\":[]}"))
-                estilo.addLayer(FillLayer("radio-relleno", "radio-datos").withProperties(fillColor("#168B7A"), fillOpacity(.12f)))
+                estilo.addLayer(FillLayer("radio-relleno", "radio-datos").withProperties(fillColor("#168B7A"), fillOpacity(.085f)))
                 estilo.addLayer(LineLayer("radio-borde", "radio-datos").withProperties(lineColor("#168B7A"), lineWidth(1.5f), lineOpacity(.7f)))
                 estilo.addSource(GeoJsonSource("campus-datos", "{\"type\":\"FeatureCollection\",\"features\":[]}"))
                 estilo.addLayer(CircleLayer("campus-puntos", "campus-datos").withProperties(
@@ -164,15 +212,19 @@ fun MapaUbicacion(
             actual?.cameraPosition?.let { posicion ->
                 posicion.target?.let { latitud = it.latitude; longitud = it.longitude }
                 zoom = posicion.zoom
+                actual?.let(::capturar)
                 val visibles = actual.queryRenderedFeatures(RectF(0f, 0f, vista.width.toFloat(), vista.height.toFloat()), "campus-puntos").size
                 Log.d("CampusGPSMapa", "Cámara quieta zoom=$zoom, puntos visibles=$visibles")
             }
         }
         actual?.addOnCameraIdleListener(alTerminar)
-        onDispose { actual?.removeOnCameraIdleListener(alTerminar) }
+        val cargado = MapView.OnDidFinishLoadingMapListener { actual?.let(::capturar) }
+        vista.addOnDidFinishLoadingMapListener(cargado)
+        actual?.let(::capturar)
+        onDispose { actual?.removeOnCameraIdleListener(alTerminar); vista.removeOnDidFinishLoadingMapListener(cargado) }
     }
 
-    LaunchedEffect(mapa, versionEstilo, estado, lugares, masCercanoId, seleccionado, puntoAzulActivo) {
+    LaunchedEffect(mapa, versionEstilo, posicionActual, lugares, masCercanoId, seleccionado, puntoAzulActivo) {
         val actual = mapa ?: return@LaunchedEffect
         val puntos = JSONArray()
         val lugaresVisibles = lugares
@@ -182,17 +234,19 @@ fun MapaUbicacion(
                 .put("properties", JSONObject().put("id", id).put("color", color)
                     .put("radio", if (id == seleccionado) 12 else 9)))
         }
-        if (estado is UbicacionUi.Lista && !puntoAzulActivo) {
-            agregar(0, estado.posicion.latitud, estado.posicion.longitud, "#D63031")
+        if (posicionActual != null) {
+            // Refuerzo vectorial del punto nativo: mantiene su visibilidad en GPU sin iconos bitmap.
+            agregar(0, posicionActual.latitud, posicionActual.longitud, "#1674D1")
         }
         lugaresVisibles.forEach { item ->
             val lugar = item.lugar
-            val color = if (lugar.id == masCercanoId) "#289342" else "#1C7ED6"
+            val color = if (lugar.id == masCercanoId) "#138A5B" else if(oscuro) "#94CDDD" else "#277CA5"
             agregar(lugar.id, lugar.latitud, lugar.longitud, color)
         }
         actual.style?.getSourceAs<GeoJsonSource>("campus-datos")?.setGeoJson(
             JSONObject().put("type", "FeatureCollection").put("features", puntos).toString())
         Log.d("CampusGPSMapa", "Marcadores campus=${lugaresVisibles.size}, propio=${estado is UbicacionUi.Lista}, cercano=$masCercanoId")
+        capturar(actual)
     }
 
     LaunchedEffect(mapa, versionEstilo, contornoRadio) {
@@ -203,13 +257,18 @@ fun MapaUbicacion(
                 .put("geometry", JSONObject().put("type", "Polygon").put("coordinates", JSONArray().put(coordenadas))).toString()
         mapa?.style?.getSourceAs<GeoJsonSource>("radio-datos")?.setGeoJson(geojson)
     }
+    LaunchedEffect(mapa,margenInferior,margenDerecho,margenSuperior,densidad) {
+        with(densidad) {
+            mapa?.setPadding(0,margenSuperior.toPx().roundToInt(),margenDerecho.toPx().roundToInt(),margenInferior.toPx().roundToInt())
+        }
+    }
 
-    LaunchedEffect(mapa, estado, versionEstilo) {
+    LaunchedEffect(mapa, posicionActual, versionEstilo) {
         val actual = mapa ?: return@LaunchedEffect
         val estilo = actual.style ?: return@LaunchedEffect
         val permitido = ContextCompat.checkSelfPermission(contexto, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(contexto, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        if (permitido && estado is UbicacionUi.Lista) {
+        if (permitido && posicionActual != null) {
             val componente = actual.locationComponent
             if (estiloUbicacion !== estilo) {
                 componente.activateLocationComponent(LocationComponentActivationOptions.builder(contexto, estilo)
@@ -220,8 +279,8 @@ fun MapaUbicacion(
             }
             componente.isLocationComponentEnabled = true
             componente.forceLocationUpdate(Location("campusgps").apply {
-                latitude = estado.posicion.latitud; longitude = estado.posicion.longitud
-                estado.posicion.precisionMetros?.let { accuracy = it }
+                latitude = posicionActual.latitud; longitude = posicionActual.longitud
+                posicionActual.precisionMetros?.let { accuracy = it }
             })
             puntoAzulActivo = true
         } else if (estiloUbicacion != null) {
@@ -230,55 +289,38 @@ fun MapaUbicacion(
         }
     }
     val claveCamara = if (seleccionado != null) "lugar:$seleccionado:$revisionSeleccion" else
-        (estado as? UbicacionUi.Lista)?.let { "pos:${it.posicion.latitud}:${it.posicion.longitud}:$revisionSeleccion" }
-    LaunchedEffect(mapa, claveCamara) {
+        posicionActual?.let { "pos:${it.latitud}:${it.longitud}:$revisionSeleccion" }
+    LaunchedEffect(mapa, claveCamara, seguirCamara) {
         val actual = mapa ?: return@LaunchedEffect
         if (claveCamara == null || claveCamara == ultimaCamaraAplicada) return@LaunchedEffect
+        if (!seguirCamara && seleccionado == null) return@LaunchedEffect
         val lugar = lugares.firstOrNull { it.lugar.id == seleccionado }?.lugar
         if (lugar != null) {
             actual.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lugar.latitud, lugar.longitud), 17.0), 500)
             propioSeleccionado = false
             Log.d("CampusGPSMapa", "Cámara seleccionada id=${lugar.id}, zoom=17")
-        } else if (estado is UbicacionUi.Lista) {
+        } else if (posicionActual != null) {
             idTocado = null; propioSeleccionado = false
-            actual.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(estado.posicion.latitud, estado.posicion.longitud),16.0),600)
+            actual.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(posicionActual.latitud, posicionActual.longitud),16.0),500)
         }
         ultimaCamaraAplicada = claveCamara
     }
 
-    Box(modifier.semantics {
+    Box(modifier.onGloballyPositioned { origen = it.positionInRoot() }.semantics {
         contentDescription = "Mapa del campus"
         stateDescription = when { errorMapa -> "Sin conexión al mapa"; mapa == null -> "Cargando mapa"; else -> "Mapa listo" }
     }) {
         AndroidView(factory = { vista }, modifier = Modifier.fillMaxSize())
-        val lugarElegido = lugares.firstOrNull { it.lugar.id == (seleccionado ?: idTocado) }?.lugar
-        if (propioSeleccionado || lugarElegido != null) {
-            Surface(Modifier.align(Alignment.TopCenter).padding(12.dp), shape = MaterialTheme.shapes.medium,
-                shadowElevation = 4.dp) {
-                Column(Modifier.padding(horizontal = 18.dp, vertical = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(if (propioSeleccionado) "Estás aquí" else lugarElegido!!.nombre, style = MaterialTheme.typography.titleMedium)
-                    if (!propioSeleccionado) Text(lugarElegido!!.categoria, style = MaterialTheme.typography.bodySmall)
-                }
-            }
-        }
         if (mapa == null && !errorMapa) {
             CircularProgressIndicator(Modifier.align(Alignment.Center).size(32.dp))
         }
         if (errorMapa) {
-            Surface(Modifier.align(Alignment.TopCenter).padding(8.dp), shape = MaterialTheme.shapes.medium) {
+            Surface(Modifier.align(Alignment.Center).padding(24.dp), shape = MaterialTheme.shapes.medium) {
                 Column(Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("No se pudo cargar el mapa. Revisa tu conexión.", style = MaterialTheme.typography.bodySmall)
                     TextButton(onClick = { reintento++ }) { Text("Reintentar mapa") }
                 }
             }
-        }
-        Column(Modifier.align(Alignment.BottomEnd).padding(end = 8.dp, bottom = 28.dp)) {
-            FilledTonalIconButton(onClick = { mapa?.animateCamera(CameraUpdateFactory.zoomIn()) }) { Text("+", fontSize = 24.sp) }
-            FilledTonalIconButton(onClick = { mapa?.animateCamera(CameraUpdateFactory.zoomOut()) }) { Text("−", fontSize = 24.sp) }
-        }
-        Surface(Modifier.align(Alignment.BottomStart), color = MaterialTheme.colorScheme.surface.copy(alpha = .92f)) {
-            Text("© OpenStreetMap · OpenMapTiles · OpenFreeMap", fontSize = 9.sp,
-                modifier = Modifier.padding(horizontal = 5.dp, vertical = 3.dp))
         }
     }
 }

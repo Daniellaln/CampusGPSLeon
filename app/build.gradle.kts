@@ -3,7 +3,6 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-
 android {
     namespace = "com.leon.campusgps"
     compileSdk = 37

@@ -4,9 +4,9 @@ Cambio autorizado por Daniella el 18/11/2026 al aparecer un prepago de S/100 en 
 
 # CampusGPS
 
-Daniella Leon · Laboratorio 13 · Fase 1 · Avance 1/10.
+Daniella Leon · Laboratorio 13 · Fase 1 · Avance 2/10.
 
-Reconstruí el ejemplo base con modelos, interfaces, repositorios, ViewModel y una pantalla de coordenadas.
+Declaré ubicación aproximada y precisa y conecté la clave privada al Manifest mediante manifestPlaceholders.
 
 Proyecto reconstruido a partir del código y los contratos de la guía; no se recibió un ZIP base.
 Paquete personalizado: `com.leon.campusgps`. Kotlin, Compose, Material 3 y MVVM con Repository.

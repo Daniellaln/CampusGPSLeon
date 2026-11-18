@@ -55,7 +55,7 @@ class UbicacionRepositoryGoogle(context: Context) : UbicacionRepository {
             val ubicacion = withTimeoutOrNull(12_000) {
                 cliente.getCurrentLocation(solicitud, cancelacion.token).await()
             } ?: throw PosicionNoDisponibleException()
-            Result.success(Posicion(ubicacion.latitude, ubicacion.longitude))
+            Result.success(Posicion(ubicacion.latitude, ubicacion.longitude, ubicacion.accuracy.takeIf { ubicacion.hasAccuracy() }))
         } catch (e: CancellationException) {
             // La cancelación de una corrutina no es un fallo del GPS.
             throw e
@@ -80,7 +80,7 @@ class UbicacionRepositoryGoogle(context: Context) : UbicacionRepository {
             .setGranularity(Granularity.GRANULARITY_PERMISSION_LEVEL).build()
         val callback = object : LocationCallback() {
             override fun onLocationResult(resultado: LocationResult) {
-                resultado.lastLocation?.let { trySend(Posicion(it.latitude, it.longitude)) }
+                resultado.lastLocation?.let { trySend(Posicion(it.latitude, it.longitude, it.accuracy.takeIf { _ -> it.hasAccuracy() })) }
             }
             override fun onLocationAvailability(disponibilidad: LocationAvailability) {
                 if (!disponibilidad.isLocationAvailable && !LocationManagerCompat.isLocationEnabled(manager))

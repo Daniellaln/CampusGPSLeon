@@ -5,6 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.SystemBarStyle
+import android.graphics.Color
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.*
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.leon.campusgps.model.ModoTema
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leon.campusgps.ui.PantallaMapa
 import com.leon.campusgps.ui.theme.CampusGPSTheme
@@ -14,10 +19,17 @@ import com.leon.campusgps.viewmodel.MapaViewModel
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(0xFF1D709F.toInt()))
+        enableEdgeToEdge()
         setContent {
-            CampusGPSTheme {
-                val vm: MapaViewModel = viewModel(factory = CampusViewModelFactory(applicationContext))
+            val vm: MapaViewModel = viewModel(factory = CampusViewModelFactory(applicationContext))
+            val modo by vm.modoTema.collectAsStateWithLifecycle()
+            val oscuro = when (modo) { ModoTema.SISTEMA -> isSystemInDarkTheme(); ModoTema.OSCURO -> true; ModoTema.CLARO -> false }
+            SideEffect {
+                enableEdgeToEdge(
+                    statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) { oscuro },
+                    navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) { oscuro })
+            }
+            CampusGPSTheme(oscuro) {
                 PantallaMapa(vm)
             }
         }

@@ -1,6 +1,6 @@
 package com.leon.campusgps.model
 
-data class Posicion(val latitud: Double, val longitud: Double)
+data class Posicion(val latitud: Double, val longitud: Double, val precisionMetros: Float? = null)
 
 data class Lugar(
     val id: Int,
@@ -20,6 +20,7 @@ enum class CategoriaLugar(val etiqueta: String) {
 }
 
 enum class TipoError { SIN_PERMISO, GPS_APAGADO, SIN_PLAY_SERVICES, OTRO }
+enum class ModoTema(val etiqueta: String) { SISTEMA("Del sistema"), CLARO("Claro"), OSCURO("Oscuro") }
 
 sealed interface UbicacionUi {
     data object Inicial : UbicacionUi

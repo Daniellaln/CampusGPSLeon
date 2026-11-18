@@ -60,6 +60,15 @@ class MapaViewModel(
     val revisionSeleccion: StateFlow<Int> = _revisionSeleccion.asStateFlow()
     private val _avisos = MutableSharedFlow<String>(extraBufferCapacity = 1)
     val avisos = _avisos.asSharedFlow()
+    val modoTema = preferenciasRepo.modoTema.stateIn(viewModelScope, SharingStarted.Eagerly, ModoTema.SISTEMA)
+
+    fun cambiarTema(modo: ModoTema) {
+        viewModelScope.launch {
+            try { preferenciasRepo.guardarTema(modo) }
+            catch (cancelacion: CancellationException) { throw cancelacion }
+            catch (_: Exception) { _avisos.emit("No se pudo guardar el tema") }
+        }
+    }
     val ultimoLugar: StateFlow<Lugar?> = preferenciasRepo.ultimoLugarId.map { id ->
         _lugares.value.firstOrNull { it.lugar.id == id }?.lugar
     }.stateIn(viewModelScope, SharingStarted.Eagerly, null)

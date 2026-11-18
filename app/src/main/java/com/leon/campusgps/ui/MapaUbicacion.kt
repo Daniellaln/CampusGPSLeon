@@ -1,6 +1,14 @@
 package com.leon.campusgps.ui
 
 import android.graphics.RectF
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.pm.PackageManager
+import android.location.Location
+import androidx.core.content.ContextCompat
+import org.maplibre.android.location.LocationComponentActivationOptions
+import org.maplibre.android.location.modes.CameraMode
+import org.maplibre.android.location.modes.RenderMode
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -36,9 +44,11 @@ import org.maplibre.android.style.sources.GeoJsonSource
 import org.json.JSONArray
 import org.json.JSONObject
 
-private const val ESTILO_LIBRE = "https://tiles.openfreemap.org/styles/liberty"
+private const val ESTILO_LIBRE = "https://tiles.openfreemap.org/styles/positron"
+private const val ESTILO_OSCURO = "https://tiles.openfreemap.org/styles/dark"
 
 @Composable
+@SuppressLint("MissingPermission")
 fun MapaUbicacion(
     estado: UbicacionUi,
     lugares: List<LugarConDistancia>,
@@ -47,7 +57,8 @@ fun MapaUbicacion(
     revisionSeleccion: Int = 0,
     onSeleccionar: (Int) -> Unit = {},
     masCercanoId: Int? = null,
-    contornoRadio: List<Posicion> = emptyList()
+    contornoRadio: List<Posicion> = emptyList(),
+    oscuro: Boolean = false
 ) {
     val contexto = LocalContext.current
     val ciclo = LocalLifecycleOwner.current.lifecycle
@@ -60,6 +71,11 @@ fun MapaUbicacion(
     var reintento by remember { mutableIntStateOf(0) }
     var propioSeleccionado by remember { mutableStateOf(false) }
     var idTocado by remember { mutableStateOf<Int?>(null) }
+    var mapaInicializado by remember { mutableStateOf<MapLibreMap?>(null) }
+    var estiloUbicacion by remember { mutableStateOf<Style?>(null) }
+    var puntoAzulActivo by remember { mutableStateOf(false) }
+    var versionEstilo by remember { mutableIntStateOf(0) }
+    var ultimaCamaraAplicada by rememberSaveable { mutableStateOf<String?>(null) }
     val vista = remember(contexto) {
         MapLibre.getInstance(contexto.applicationContext)
         MapView(contexto, MapLibreMapOptions.createFromAttributes(contexto).textureMode(true)).apply {
@@ -99,9 +115,13 @@ fun MapaUbicacion(
         onDispose { vista.removeOnDidFailLoadingMapListener(fallo) }
     }
 
-    LaunchedEffect(vista, reintento) {
+    LaunchedEffect(vista, reintento, oscuro) {
         errorMapa = false
+        mapa = null
+        puntoAzulActivo = false
         vista.getMapAsync { actual ->
+            if (mapaInicializado !== actual) {
+            mapaInicializado = actual
             actual.cameraPosition = CameraPosition.Builder()
                 .target(LatLng(latitud, longitud)).zoom(zoom).build()
             actual.uiSettings.isAttributionEnabled = true
@@ -121,7 +141,8 @@ fun MapaUbicacion(
                 }
                 encontrado != null
             }
-            actual.setStyle(Style.Builder().fromUri(ESTILO_LIBRE)) { estilo ->
+            }
+            actual.setStyle(Style.Builder().fromUri(if (oscuro) ESTILO_OSCURO else ESTILO_LIBRE)) { estilo ->
                 estilo.addSource(GeoJsonSource("radio-datos", "{\"type\":\"FeatureCollection\",\"features\":[]}"))
                 estilo.addLayer(FillLayer("radio-relleno", "radio-datos").withProperties(fillColor("#168B7A"), fillOpacity(.12f)))
                 estilo.addLayer(LineLayer("radio-borde", "radio-datos").withProperties(lineColor("#168B7A"), lineWidth(1.5f), lineOpacity(.7f)))
@@ -131,6 +152,7 @@ fun MapaUbicacion(
                     circleStrokeColor("#FFFFFF"), circleStrokeWidth(3f)))
                 errorMapa = false
                 mapa = actual
+                versionEstilo++
                 Log.d("CampusGPSMapa", "Estilo OpenFreeMap cargado")
             }
         }
@@ -150,7 +172,7 @@ fun MapaUbicacion(
         onDispose { actual?.removeOnCameraIdleListener(alTerminar) }
     }
 
-    LaunchedEffect(mapa, estado, lugares, masCercanoId, seleccionado) {
+    LaunchedEffect(mapa, versionEstilo, estado, lugares, masCercanoId, seleccionado, puntoAzulActivo) {
         val actual = mapa ?: return@LaunchedEffect
         val puntos = JSONArray()
         val lugaresVisibles = lugares
@@ -160,7 +182,7 @@ fun MapaUbicacion(
                 .put("properties", JSONObject().put("id", id).put("color", color)
                     .put("radio", if (id == seleccionado) 12 else 9)))
         }
-        if (estado is UbicacionUi.Lista) {
+        if (estado is UbicacionUi.Lista && !puntoAzulActivo) {
             agregar(0, estado.posicion.latitud, estado.posicion.longitud, "#D63031")
         }
         lugaresVisibles.forEach { item ->
@@ -173,7 +195,7 @@ fun MapaUbicacion(
         Log.d("CampusGPSMapa", "Marcadores campus=${lugaresVisibles.size}, propio=${estado is UbicacionUi.Lista}, cercano=$masCercanoId")
     }
 
-    LaunchedEffect(mapa, contornoRadio) {
+    LaunchedEffect(mapa, versionEstilo, contornoRadio) {
         val coordenadas = JSONArray()
         contornoRadio.forEach { coordenadas.put(JSONArray().put(it.longitud).put(it.latitud)) }
         val geojson = if (contornoRadio.isEmpty()) "{\"type\":\"FeatureCollection\",\"features\":[]}" else
@@ -182,22 +204,46 @@ fun MapaUbicacion(
         mapa?.style?.getSourceAs<GeoJsonSource>("radio-datos")?.setGeoJson(geojson)
     }
 
-    LaunchedEffect(mapa, estado, revisionSeleccion) {
+    LaunchedEffect(mapa, estado, versionEstilo) {
         val actual = mapa ?: return@LaunchedEffect
-        if (estado is UbicacionUi.Lista && seleccionado == null) {
-            idTocado = null
-            propioSeleccionado = false
-            actual.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                LatLng(estado.posicion.latitud, estado.posicion.longitud), 16.0), 600)
+        val estilo = actual.style ?: return@LaunchedEffect
+        val permitido = ContextCompat.checkSelfPermission(contexto, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(contexto, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        if (permitido && estado is UbicacionUi.Lista) {
+            val componente = actual.locationComponent
+            if (estiloUbicacion !== estilo) {
+                componente.activateLocationComponent(LocationComponentActivationOptions.builder(contexto, estilo)
+                    .useDefaultLocationEngine(false).build())
+                componente.cameraMode = CameraMode.NONE
+                componente.renderMode = RenderMode.NORMAL
+                estiloUbicacion = estilo
+            }
+            componente.isLocationComponentEnabled = true
+            componente.forceLocationUpdate(Location("campusgps").apply {
+                latitude = estado.posicion.latitud; longitude = estado.posicion.longitud
+                estado.posicion.precisionMetros?.let { accuracy = it }
+            })
+            puntoAzulActivo = true
+        } else if (estiloUbicacion != null) {
+            actual.locationComponent.isLocationComponentEnabled = false
+            puntoAzulActivo = false
         }
     }
-    LaunchedEffect(mapa, seleccionado, revisionSeleccion) {
+    val claveCamara = if (seleccionado != null) "lugar:$seleccionado:$revisionSeleccion" else
+        (estado as? UbicacionUi.Lista)?.let { "pos:${it.posicion.latitud}:${it.posicion.longitud}:$revisionSeleccion" }
+    LaunchedEffect(mapa, claveCamara) {
         val actual = mapa ?: return@LaunchedEffect
-        lugares.firstOrNull { it.lugar.id == seleccionado }?.lugar?.let { lugar ->
+        if (claveCamara == null || claveCamara == ultimaCamaraAplicada) return@LaunchedEffect
+        val lugar = lugares.firstOrNull { it.lugar.id == seleccionado }?.lugar
+        if (lugar != null) {
             actual.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lugar.latitud, lugar.longitud), 17.0), 500)
             propioSeleccionado = false
             Log.d("CampusGPSMapa", "Cámara seleccionada id=${lugar.id}, zoom=17")
+        } else if (estado is UbicacionUi.Lista) {
+            idTocado = null; propioSeleccionado = false
+            actual.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(estado.posicion.latitud, estado.posicion.longitud),16.0),600)
         }
+        ultimaCamaraAplicada = claveCamara
     }
 
     Box(modifier.semantics {

@@ -20,6 +20,13 @@ class PreferenciasTest {
         override suspend fun obtenerPosicion()=Result.failure<Posicion>(Exception())
         override fun observarPosiciones()=emptyFlow<Posicion>()
     }
+    @Test fun elTemaSeConservaAlCrearOtroViewModel() = runTest(dispatcher) {
+        val prefs=PreferenciasEnMemoria()
+        val primero=MapaViewModel(ubicacion,LugaresRepositoryLocal(),prefs);runCurrent()
+        primero.cambiarTema(ModoTema.OSCURO);runCurrent()
+        val segundo=MapaViewModel(ubicacion,LugaresRepositoryLocal(),prefs);runCurrent()
+        assertEquals(ModoTema.OSCURO,segundo.modoTema.value)
+    }
     @Test fun seleccionarPersisteYUnNuevoViewModelRecuperaElLugar() = runTest(dispatcher) {
         val prefs=PreferenciasEnMemoria()
         val primero=MapaViewModel(ubicacion,LugaresRepositoryLocal(),prefs)

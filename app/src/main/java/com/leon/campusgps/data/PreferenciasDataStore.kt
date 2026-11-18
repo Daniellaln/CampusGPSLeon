@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import com.leon.campusgps.model.ModoTema
 import androidx.datastore.preferences.preferencesDataStore
 import java.io.IOException
 import kotlinx.coroutines.flow.catch
@@ -15,11 +17,17 @@ private val Context.preferenciasCampus by preferencesDataStore(name = "campus_pr
 class PreferenciasDataStore(context: Context) : PreferenciasRepository {
     private val almacen = context.applicationContext.preferenciasCampus
     private val ultimo = intPreferencesKey("ultimo_lugar_id")
-    override val ultimoLugarId = almacen.data.catch { error ->
+    private val tema = stringPreferencesKey("modo_tema")
+    private val datos = almacen.data.catch { error ->
         if (error is IOException) emit(emptyPreferences()) else throw error
-    }.map { it[ultimo] }
+    }
+    override val ultimoLugarId = datos.map { it[ultimo] }
+    override val modoTema = datos.map { preferencias ->
+        ModoTema.entries.firstOrNull { it.name == preferencias[tema] } ?: ModoTema.SISTEMA
+    }
     override suspend fun guardarUltimoLugar(id: Int) {
         require(id > 0)
         almacen.edit { it[ultimo] = id }
     }
+    override suspend fun guardarTema(modo: ModoTema) { almacen.edit { it[tema] = modo.name } }
 }

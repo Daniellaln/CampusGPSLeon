@@ -13,6 +13,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leon.campusgps.model.UbicacionUi
 import com.leon.campusgps.model.CategoriaLugar
+import com.leon.campusgps.model.ModoTema
+import androidx.compose.ui.graphics.luminance
 import com.leon.campusgps.viewmodel.MapaViewModel
 import com.leon.campusgps.util.formatearDistancia
 import android.Manifest
@@ -36,6 +38,7 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
     val seguimiento by vm.seguimiento.collectAsStateWithLifecycle()
     val ultimoLugar by vm.ultimoLugar.collectAsStateWithLifecycle()
     val avisos = remember { SnackbarHostState() }
+    var temaAbierto by remember { mutableStateOf(false) }
     LaunchedEffect(vm) { vm.avisos.collect { avisos.showSnackbar(it) } }
     var seguirTrasPermiso by remember { mutableStateOf(false) }
     val seleccionado by vm.seleccionado.collectAsStateWithLifecycle()
@@ -66,7 +69,16 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
         onDispose { ciclo.removeObserver(observador) }
     }
     Scaffold(snackbarHost = { SnackbarHost(avisos) }, topBar = {
-        TopAppBar(title = { Text("CampusGPS") }, colors = TopAppBarDefaults.topAppBarColors(
+        TopAppBar(title = { Text("CampusGPS") }, actions = {
+            Box {
+                TextButton(onClick = { temaAbierto = true }) { Text("Tema", color = MaterialTheme.colorScheme.onPrimary) }
+                DropdownMenu(expanded = temaAbierto, onDismissRequest = { temaAbierto = false }) {
+                    ModoTema.entries.forEach { modo ->
+                        DropdownMenuItem(text = { Text(modo.etiqueta) }, onClick = { vm.cambiarTema(modo); temaAbierto = false })
+                    }
+                }
+            }
+        }, colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             titleContentColor = MaterialTheme.colorScheme.onPrimary))
     }) { padding ->
@@ -89,7 +101,8 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
                 revisionSeleccion = revision,
                 onSeleccionar = vm::seleccionar,
                 masCercanoId = masCercano?.id,
-                contornoRadio = contorno
+                contornoRadio = contorno,
+                oscuro = MaterialTheme.colorScheme.background.luminance() < .5f
             ) else Spacer(Modifier.fillMaxWidth().weight(1f))
             }
             Button(onClick = ::alPulsar, enabled = estado != UbicacionUi.Buscando,

@@ -69,3 +69,21 @@ La UI debe ofrecer Volver a [nombre]. Si falla una escritura, muestra un aviso b
 | Prompt que escribí | Qué respondió Gemini | Qué cambié o descarté | Por qué |
 |---|---|---|---|
 | 4. Último lugar | Pendiente de ejecutar en Gemini; referencia disponible en este commit. | Inyección de interfaz, delegado único y restauración que respeta selecciones nuevas. | Guarda fuera de la UI y evita que una lectura tardía cambie una decisión del usuario. |
+
+## 5. Temas y punto azul
+
+```text
+Compórtate como un experto en Material 3, MapLibre Native y permisos Android. Ayúdame a añadir el tema claro/oscuro y la ubicación azul nativa a CampusGPS, conservando MVVM y el proveedor sin claves.
+
+Guarda ModoTema SISTEMA/CLARO/OSCURO en el Repository de DataStore, con clave modo_tema. Expónlo desde el ViewModel e incluye un menú Material 3 para elegirlo. Define dos ColorScheme completos: claro blanco frío y verde agua profundo; oscuro verde muy profundo con acento menta legible. Ajusta también los iconos de las barras del sistema. No inviertas los colores de forma mecánica.
+
+Cambia el estilo del mapa a https://tiles.openfreemap.org/styles/positron en claro y https://tiles.openfreemap.org/styles/dark en oscuro. Recrea las fuentes de lugares/radio al terminar de cargar el nuevo estilo. Mantén la cámara al cambiar tema y evita registrar otra vez los listeners de toque en cada recarga.
+
+Para el punto azul usa locationComponent de MapLibre: comprueba FINE o COARSE antes de activarlo, LocationComponentActivationOptions con useDefaultLocationEngine(false), CameraMode.NONE y RenderMode.NORMAL. Alimenta forceLocationUpdate con la posición que ya entrega el ViewModel. Así no se consultan ubicaciones desde el Composable ni se duplica el motor del Repository. Sustituye el marcador rojo propio solo cuando el punto nativo esté activo.
+
+Comprueba persistencia del tema, estilos reales de día/noche, texto legible, permiso denegado sin cierre y que el punto azul se mueva con el seguimiento. No agregues una clave de Maps ni APIs de Apple.
+```
+
+| Prompt que escribí | Qué respondió Gemini | Qué cambié o descarté | Por qué |
+|---|---|---|---|
+| 5. Temas y punto azul | Pendiente de ejecutar en Gemini; referencia disponible en este commit. | Estilos de MapLibre y componente nativo con motor desactivado; las posiciones llegan desde el Repository. | Conserva la arquitectura y evita solicitudes de GPS duplicadas o una dependencia de facturación. |

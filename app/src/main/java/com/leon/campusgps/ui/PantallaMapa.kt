@@ -1,6 +1,8 @@
 package com.leon.campusgps.ui
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -10,6 +12,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leon.campusgps.model.UbicacionUi
+import com.leon.campusgps.model.CategoriaLugar
 import com.leon.campusgps.viewmodel.MapaViewModel
 import com.leon.campusgps.util.formatearDistancia
 import android.Manifest
@@ -23,7 +26,8 @@ import androidx.core.content.ContextCompat
 @Composable
 fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
     val estado by vm.estado.collectAsStateWithLifecycle()
-    val lugares by vm.lugares.collectAsStateWithLifecycle()
+    val lugares by vm.lugaresFiltrados.collectAsStateWithLifecycle()
+    val categoria by vm.categoria.collectAsStateWithLifecycle()
     val seleccionado by vm.seleccionado.collectAsStateWithLifecycle()
     val revision by vm.revisionSeleccion.collectAsStateWithLifecycle()
     val masCercano by vm.masCercano.collectAsStateWithLifecycle()
@@ -45,6 +49,13 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
         BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
         val compacta = maxHeight < 430.dp
         Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                CategoriaLugar.entries.forEach { opcion ->
+                    FilterChip(selected = categoria == opcion, onClick = { vm.filtrar(opcion) },
+                        label = { Text(opcion.etiqueta) })
+                }
+            }
             if (estado !is UbicacionUi.Error) {
             if (mostrarMapa) MapaUbicacion(
                 estado = estado,

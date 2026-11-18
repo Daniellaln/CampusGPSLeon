@@ -20,6 +20,17 @@ class MapaViewModel(
     val estado: StateFlow<UbicacionUi> = _estado.asStateFlow()
     private val _lugares = MutableStateFlow(lugaresRepo.obtenerLugares().map { LugarConDistancia(it, null) })
     val lugares: StateFlow<List<LugarConDistancia>> = _lugares.asStateFlow()
+    private val _categoria = MutableStateFlow(CategoriaLugar.TODOS)
+    val categoria: StateFlow<CategoriaLugar> = _categoria.asStateFlow()
+    val lugaresFiltrados: StateFlow<List<LugarConDistancia>> = combine(lugares, categoria) { lista, filtro ->
+        lista.filter { filtro.incluye(it.lugar) }
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, _lugares.value)
+
+    fun filtrar(categoria: CategoriaLugar) {
+        _categoria.value = categoria
+        val actual = _lugares.value.firstOrNull { it.lugar.id == _seleccionado.value }
+        if (actual != null && !categoria.incluye(actual.lugar)) seleccionar(null)
+    }
 
     private val _seleccionado = MutableStateFlow<Int?>(null)
     val seleccionado: StateFlow<Int?> = _seleccionado.asStateFlow()
@@ -33,7 +44,7 @@ class MapaViewModel(
         _revisionSeleccion.value++
     }
 
-    val masCercano: StateFlow<Lugar?> = lugares.map { lista ->
+    val masCercano: StateFlow<Lugar?> = lugaresFiltrados.map { lista ->
         lista.firstOrNull { it.metros != null }?.lugar
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 

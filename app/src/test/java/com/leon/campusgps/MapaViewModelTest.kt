@@ -24,6 +24,24 @@ class MapaViewModelTest {
     }
     private fun vm(repo: UbicacionRepository) = MapaViewModel(repo, LugaresRepositoryLocal())
 
+    @Test fun filtroDeEstudioComparteListaConMapaYLimpiaSeleccionOculta() = runTest(dispatcher) {
+        val m=vm(Repo { Result.failure(Exception()) })
+        m.seleccionar(2)
+        m.filtrar(CategoriaLugar.ESTUDIO)
+        runCurrent()
+        assertEquals(listOf(1,3),m.lugaresFiltrados.value.map { it.lugar.id })
+        assertNull(m.seleccionado.value)
+        assertEquals(UbicacionUi.Inicial,m.estado.value)
+    }
+    @Test fun volverATodoRecuperaLugaresSinConsultarGPS() = runTest(dispatcher) {
+        val r=Repo { Result.failure(Exception()) };val m=vm(r)
+        m.filtrar(CategoriaLugar.COMIDA);runCurrent()
+        assertEquals(listOf(2),m.lugaresFiltrados.value.map { it.lugar.id })
+        m.filtrar(CategoriaLugar.TODOS);runCurrent()
+        assertEquals(5,m.lugaresFiltrados.value.size)
+        assertEquals(0,r.llamadas)
+    }
+
     @Test fun inicialmenteHayCincoLugaresSinDistancia() {
         val m=vm(Repo { Result.failure(Exception()) })
         assertEquals(5,m.lugares.value.size)

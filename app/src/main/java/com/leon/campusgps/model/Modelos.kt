@@ -13,6 +13,12 @@ data class Lugar(
 // null indica que todavía no se ha obtenido la posición del dispositivo.
 data class LugarConDistancia(val lugar: Lugar, val metros: Float?)
 
+enum class CategoriaLugar(val etiqueta: String) {
+    TODOS("Todo"), ESTUDIO("Estudio"), COMIDA("Comida"), EVENTOS("Eventos"), SERVICIOS("Servicios");
+
+    fun incluye(lugar: Lugar): Boolean = this == TODOS || lugar.categoria == etiqueta
+}
+
 enum class TipoError { SIN_PERMISO, GPS_APAGADO, SIN_PLAY_SERVICES, OTRO }
 
 sealed interface UbicacionUi {

@@ -18,7 +18,7 @@ class SeguimientoTest {
         val eventos=MutableSharedFlow<Posicion>(extraBufferCapacity=4)
         var inicios=0;var paradas=0
         override fun playServicesDisponible()=true
-        override suspend fun obtenerPosicion()=Result.success(Posicion(-12.0464,-77.0428))
+        override suspend fun obtenerPosicion()=Result.success(Posicion(CampusTecsup.LATITUD,CampusTecsup.LONGITUD))
         override fun observarPosiciones()=eventos.onStart { inicios++ }.onCompletion { paradas++ }
     }
     @Test fun iniciarDosVecesMantieneUnaSolaSuscripcionYPararLaLimpia() = runTest(dispatcher) {
@@ -35,9 +35,9 @@ class SeguimientoTest {
         val sinLugares = object : LugaresRepository { override fun obtenerLugares() = emptyList<Lugar>() }
         val vm=MapaViewModel(repo,sinLugares)
         vm.iniciarSeguimiento();runCurrent()
-        val uno=Posicion(-12.0464,-77.0428);repo.eventos.emit(uno);runCurrent()
+        val uno=Posicion(CampusTecsup.LATITUD,CampusTecsup.LONGITUD);repo.eventos.emit(uno);runCurrent()
         assertEquals(uno,(vm.estado.value as UbicacionUi.Lista).posicion)
-        val dos=Posicion(-12.048,-77.044);repo.eventos.emit(dos);runCurrent()
+        val dos=Posicion(-12.0447880312089,-76.95276423232795);repo.eventos.emit(dos);runCurrent()
         assertEquals(dos,(vm.estado.value as UbicacionUi.Lista).posicion)
         vm.detenerSeguimiento();runCurrent()
         assertEquals(dos,(vm.estado.value as UbicacionUi.Lista).posicion)

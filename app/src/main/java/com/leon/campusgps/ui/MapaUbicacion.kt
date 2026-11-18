@@ -93,9 +93,9 @@ fun MapaUbicacion(
     val capturaActual by rememberUpdatedState(onCaptura)
     val scope = rememberCoroutineScope()
     var origen by remember { mutableStateOf(Offset.Zero) }
-    var latitud by rememberSaveable { mutableDoubleStateOf(-12.0464) }
-    var longitud by rememberSaveable { mutableDoubleStateOf(-77.0428) }
-    var zoom by rememberSaveable { mutableDoubleStateOf(14.0) }
+    var latitud by rememberSaveable { mutableDoubleStateOf(CampusTecsup.LATITUD) }
+    var longitud by rememberSaveable { mutableDoubleStateOf(CampusTecsup.LONGITUD) }
+    var zoom by rememberSaveable { mutableDoubleStateOf(CampusTecsup.ZOOM_INICIAL) }
     var mapa by remember { mutableStateOf<MapLibreMap?>(null) }
     var errorMapa by remember { mutableStateOf(false) }
     var reintento by remember { mutableIntStateOf(0) }

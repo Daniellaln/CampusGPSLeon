@@ -171,7 +171,7 @@ components:
 
 La dirección confirmada por Daniella combina blanco frío, verde agua profundo y cristal legible. La interfaz es sobria y táctil: el mapa real conserva su detalle y las superficies flotantes reúnen acciones breves. Los rótulos y los iconos permanecen nítidos sobre el material.
 
-Este documento describe el código Android de fase 2, no una implementación iOS ni un material nativo de Apple. Kotlin, Compose y Material 3 son la autoridad. Los lugares son ficticios; la ilustración inicial no es una fotografía ni un plano del campus. No hay login ni perfil.
+Este documento describe el código Android de fase 2, no una implementación iOS ni un material nativo de Apple. Kotlin, Compose y Material 3 son la autoridad. Las coordenadas de los lugares fueron facilitadas por Daniella; la ilustración inicial no es una fotografía ni un plano del campus. No hay login ni perfil.
 
 **Key Characteristics:**
 

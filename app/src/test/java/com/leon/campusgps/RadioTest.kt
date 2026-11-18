@@ -1,6 +1,7 @@
 package com.leon.campusgps
 
 import com.leon.campusgps.model.Posicion
+import com.leon.campusgps.model.CampusTecsup
 import com.leon.campusgps.util.*
 import org.junit.Assert.*
 import org.junit.Test
@@ -13,7 +14,7 @@ class RadioTest {
         assertNull(estaDentroDelRadio(null,200))
     }
     @Test fun elPoligonoCierraYConservaElRadioEnCualquierDireccion() {
-        val centro=Posicion(-12.0464,-77.0428)
+        val centro=Posicion(CampusTecsup.LATITUD,CampusTecsup.LONGITUD)
         val puntos=contornoDelRadio(centro,500)
         assertEquals(65,puntos.size)
         assertEquals(puntos.first().latitud,puntos.last().latitud,1e-8)

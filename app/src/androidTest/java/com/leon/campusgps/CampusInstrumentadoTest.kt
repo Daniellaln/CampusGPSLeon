@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.first
 class CampusInstrumentadoTest {
     @get:Rule val pantalla = createComposeRule()
     private class Repo : UbicacionRepository {
-        var posicion=Posicion(-12.0464,-77.0428)
+        var posicion=Posicion(CampusTecsup.LATITUD,CampusTecsup.LONGITUD)
         var fallo: Exception?=null
         var disponible=true
         override fun playServicesDisponible()=disponible
@@ -43,27 +43,27 @@ class CampusInstrumentadoTest {
     }
     @Test fun distanciasDelPuntoBaseSeOrdenanCorrectamente() {
         val vm=mostrar();buscar(vm)
-        assertEquals(listOf(1,2,3,4,5),vm.lugares.value.map { it.lugar.id })
+        assertEquals(listOf(3,2,4,1,5),vm.lugares.value.map { it.lugar.id })
         assertTrue(vm.lugares.value.all { it.metros!! > 0 })
-        assertTrue(vm.lugares.value.first().metros!! in 70f..110f)
+        assertTrue(vm.lugares.value.first().metros!! in 30f..45f)
         pantalla.onNodeWithText("Ubicación lista").assertIsDisplayed()
     }
     @Test fun masCercanoEstaDeshabilitadoSinUbicacion() {
         mostrar();pantalla.onNodeWithText("Ir al más cercano").assertIsNotEnabled()
     }
-    @Test fun botonMasCercanoSeleccionaLaBiblioteca() {
+    @Test fun botonMasCercanoSeleccionaElLaboratorioDesdeElCentroDelCampus() {
         val vm=mostrar();buscar(vm)
         pantalla.onNodeWithText("Ir al más cercano").assertIsEnabled().performClick()
-        pantalla.runOnIdle { assertEquals(1,vm.seleccionado.value) }
+        pantalla.runOnIdle { assertEquals(3,vm.seleccionado.value) }
     }
     @Test fun tocarLaTarjetaSeleccionaSuId() {
         val vm=mostrar();buscar(vm)
-        pantalla.onNodeWithText("Cafetería Campus").performClick()
+        pantalla.onNodeWithText("Cafetería").performClick()
         pantalla.runOnIdle { assertEquals(2,vm.seleccionado.value) }
     }
     @Test fun nuevaUbicacionCambiaOrdenYCercano() {
         val repo=Repo();val vm=mostrar(repo);buscar(vm)
-        repo.posicion=Posicion(-12.0480,-77.0440);buscar(vm)
+        repo.posicion=Posicion(-12.0447880312089,-76.95276423232795);buscar(vm)
         assertEquals(4,vm.lugares.value.first().lugar.id)
         pantalla.waitUntil { vm.masCercano.value?.id == 4 }
         assertEquals(0f,vm.lugares.value.first().metros!!,0.1f)
@@ -90,10 +90,10 @@ class CampusInstrumentadoTest {
         pantalla.onNodeWithText("100 m").performClick()
         pantalla.onNodeWithText("Ver lugares").performClick()
         pantalla.onNodeWithText("2 lugares").assertIsDisplayed()
-        pantalla.onNodeWithText("Cafetería Campus").assertDoesNotExist()
+        pantalla.onNodeWithText("Cafetería").assertDoesNotExist()
         pantalla.runOnIdle {
             assertEquals(100,vm.radio.value)
-            assertEquals(listOf(1,3),vm.lugaresFiltrados.value.map { it.lugar.id })
+            assertEquals(listOf(3,1),vm.lugaresFiltrados.value.map { it.lugar.id })
             assertTrue(vm.lugaresFiltrados.value.first().dentroDelRadio==true)
             assertTrue(vm.lugaresFiltrados.value.last().dentroDelRadio==false)
         }
@@ -103,7 +103,7 @@ class CampusInstrumentadoTest {
         val vm=mostrar();buscar(vm)
         pantalla.onNodeWithContentDescription("Mostrar todos los lugares").performClick()
         pantalla.onNodeWithContentDescription("Contraer lugares").assertIsDisplayed()
-        pantalla.onNodeWithText("Estacionamiento Norte").performScrollTo().assertIsDisplayed()
+        pantalla.onNodeWithText("Estacionamiento").performScrollTo().assertIsDisplayed()
     }
 
     @Test fun preferenciasSeCompartenEntreAdaptadoresReales() = kotlinx.coroutines.runBlocking {

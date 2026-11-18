@@ -739,7 +739,7 @@
       "kind": "button",
       "refersTo": "place-row",
       "description": "Lugar cercano; nombre y distancia se reparten espacio, sin ancho de texto fijo.",
-      "html": "<button class=\"ds-place\"><svg viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" aria-hidden=\"true\"><path d=\"M3 4h7a3 3 0 0 1 3 3v14a4 4 0 0 0-3-2H3V4ZM13 7a3 3 0 0 1 3-3h5v15h-5a4 4 0 0 0-3 2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg><span class=\"ds-place-copy\"><strong>Biblioteca Central</strong><small>Estudio · En el radio</small></span><span class=\"ds-distance\">88 m</span></button>",
+      "html": "<button class=\"ds-place\"><svg viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" aria-hidden=\"true\"><path d=\"M3 4h7a3 3 0 0 1 3 3v14a4 4 0 0 0-3-2H3V4ZM13 7a3 3 0 0 1 3-3h5v15h-5a4 4 0 0 0-3 2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg><span class=\"ds-place-copy\"><strong>Laboratorio de Cómputo</strong><small>Estudio · En el radio</small></span><span class=\"ds-distance\">37 m</span></button>",
       "css": ".ds-place{display:flex;align-items:center;gap:12px;width:360px;max-width:100%;min-height:72px;padding:10px;border:0;border-radius:12px;color:#087768;background:transparent;text-align:left;cursor:pointer;font-family:sans-serif}.ds-place svg{width:25px;height:25px;flex:none}.ds-place-copy{flex:1;min-width:0}.ds-place-copy strong{display:block;padding-right:12px;font-size:16px;line-height:24px;font-weight:600;letter-spacing:.5px}.ds-place-copy small{display:block;font-size:12px;line-height:16px;letter-spacing:.4px;color:#44625C}.ds-distance{flex:0 0 64px;margin-left:8px;text-align:right;font-size:14px;line-height:20px;font-weight:600;color:#142D29}.ds-place:hover{filter:brightness(.97)}.ds-place:focus-visible{outline:3px solid #69847C;outline-offset:3px}.ds-place:active{transform:scale(.945)}@media(prefers-reduced-motion:reduce){.ds-place{transition:none}}"
     },
     {
@@ -753,7 +753,7 @@
   ],
   "narrative": {
     "northStar": "Verde agua y vidrio claro",
-    "overview": "La dirección confirmada por Daniella combina blanco frío, verde agua profundo y cristal legible. La interfaz es sobria y táctil: el mapa real conserva su detalle y las superficies flotantes reúnen acciones breves. Los rótulos y los iconos permanecen nítidos sobre el material.\n\nEste documento describe el código Android de fase 2, no una implementación iOS ni un material nativo de Apple. Kotlin, Compose y Material 3 son la autoridad. Los lugares son ficticios; la ilustración inicial no es una fotografía ni un plano del campus. No hay login ni perfil.",
+    "overview": "La dirección confirmada por Daniella combina blanco frío, verde agua profundo y cristal legible. La interfaz es sobria y táctil: el mapa real conserva su detalle y las superficies flotantes reúnen acciones breves. Los rótulos y los iconos permanecen nítidos sobre el material.\n\nEste documento describe el código Android de fase 2, no una implementación iOS ni un material nativo de Apple. Kotlin, Compose y Material 3 son la autoridad. Las coordenadas de los lugares fueron facilitadas por Daniella; la ilustración inicial no es una fotografía ni un plano del campus. No hay login ni perfil.",
     "keyCharacteristics": [
       "Verde agua para acciones y estado, con equivalentes explícitos de noche.",
       "Cristal ligero en controles y centro mate en superficies de lectura.",

@@ -1,6 +1,6 @@
 # Verificación de CampusGPS
 
-18 de noviembre de 2026. Windows, JDK 21 y emulador Pixel_8_Pro_2 con Android 17/API 37.
+18 de noviembre de 2026. Windows, JDK 21 y emulador Pixel_8_Pro_2 con Android 17/API 37. Mapa centrado en Tecsup Santa Anita con los cinco puntos facilitados por Daniella.
 
 ## Fase 2
 
@@ -16,7 +16,7 @@ El material AGSL refracta capturas del mapa en API33 o superior; el emulador no 
 
 ## Alcance
 
-No se probó en un dispositivo físico ni en API24. Las posiciones de las capturas se enviaron desde los controles del emulador. Los lugares son ficticios. El mapa necesita Internet y la ubicación requiere Google Play Services. La alternativa anterior a API33 está en código, no tiene una captura de otro emulador.
+No se probó en un dispositivo físico ni en API24. Las posiciones de las capturas se enviaron desde los controles del emulador. Las coordenadas de los destinos fueron proporcionadas por Daniella; la ubicación de las capturas se simula dentro de Tecsup. El mapa necesita Internet y la ubicación requiere Google Play Services. La alternativa anterior a API33 está en código, no tiene una captura de otro emulador.
 
 Las capturas finales usan aceleración Hardware del emulador. Con SwiftShader faltaban los rótulos; al usar la GPU del equipo aparecieron, conservando MapLibre OpenGL 13.5.4. Si ocurre en otro emulador, revisa Graphics Hardware/Automatic y haz Cold Boot. La [incidencia oficial de MapLibre](https://github.com/maplibre/maplibre-native/issues/3648) describe este problema con emuladores. La configuración de hardware de un equipo no forma parte del proyecto entregado.
 

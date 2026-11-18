@@ -167,3 +167,28 @@ Documenta pruebas ejecutadas y sus límites en docs/VERIFICACION.md; deja la gu�
 | Prompt que escribí | Qué respondió Gemini | Qué cambié o descarté | Por qué |
 |---|---|---|---|
 | 9. Entrega | Pendiente de ejecutar en Gemini; documentación de referencia preparada con Codex. | Una guía ordenada, recursos dentro de la repo, comparación real y comprobaciones con límites explícitos. | Cualquier persona puede seguir el proceso sin acceder al equipo de Daniella. |
+
+## 10. Tecsup Santa Anita y ubicaciones reales
+
+```text
+Compórtate como un experto en geolocalización Android, Kotlin y arquitectura MVVM. Ayúdame a adaptar CampusGPS al campus real de Tecsup Santa Anita después de las mejoras anteriores, trabajando solo en mejora-ia. Este prompt sustituye las posiciones de demostración del centro de Lima y sus expectativas de distancia en los prompts anteriores. Conserva MapLibre OpenGL13.5.4/OpenFreeMap y todo el diseño ya construido; no rediseñes ni cambies el proveedor.
+
+Crea model/CampusTecsup.kt con LATITUD=-12.0439002, LONGITUD=-76.9529147, ZOOM_INICIAL=16.0 y NOMBRE="Tecsup · Santa Anita". Es el centro del recinto OpenStreetMap way357287696. Úsalo únicamente como cámara inicial en MapaUbicacion y añade el nombre de la sede debajo de CampusGPS en la cabecera. Al localizar o seguir, la posición y distancias deben continuar llegando del Repository mediante FusedLocationProviderClient: no sustituyas el GPS real por la constante del campus.
+
+En data/LugaresRepositoryLocal.kt conserva IDs estables y coloca exactamente estos destinos indicados por Daniella:
+1 Biblioteca, Estudio: -12.044947716677237, -76.95291464372102
+2 Cafetería, Comida: -12.044048206861511, -76.9521813705978
+3 Laboratorio de Cómputo, Estudio: -12.043717829954366, -76.95320316878995
+4 Auditorio, Eventos: -12.0447880312089, -76.95276423232795
+5 Estacionamiento, Servicios: -12.044383822992161, -76.95174238785984
+
+No inventes puntos interiores ni traslades los anteriores con una suma fija. Mantén los IDs para que DataStore restaure el mismo destino tras actualizar la app. Registra las coordenadas y su procedencia en docs/CAMPUS.md y docs/campus_tecsup.json; la ilustración inicial sigue siendo un recurso generado, no una foto del campus.
+
+Actualiza las pruebas: desde el centro del recinto el orden esperado es Laboratorio, Cafetería, Auditorio, Biblioteca y Estacionamiento; el más cercano es el ID3, aproximadamente37m. En Estudio/100m, Laboratorio está dentro y Biblioteca fuera. Una nueva posición exactamente en el Auditorio debe dar0m y convertirlo en el más cercano. Conserva pruebas de permisos, cancelación y persistencia; actualiza las etiquetas simplificadas sin Central/Principal/Norte inventados.
+
+Compila, ejecuta las pruebas y recaptura los estados sobre Tecsup. Solo en el emulador envía el centro del campus y luego el Auditorio para demostrar movimiento. Actualiza README y verificación para no presentar destinos ficticios ni capturas del centro de Lima como la versión actual. Conserva main y los avances históricos; añade esta corrección como un nuevo commit con mensaje detallado en primera persona.
+```
+
+| Prompt que escribí | Qué respondió Gemini | Qué cambié o descarté | Por qué |
+|---|---|---|---|
+| 10. Campus real | Pendiente de ejecutar en Gemini; referencia actualizada con Codex usando las coordenadas enviadas por Daniella. | Centro real de Tecsup, cinco destinos precisos, nombres simples y nuevas expectativas de orden/radio. | Las posiciones de demostración de la guía apuntaban a otra zona de Lima. |

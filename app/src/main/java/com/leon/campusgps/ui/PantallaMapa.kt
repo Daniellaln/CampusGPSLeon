@@ -130,7 +130,10 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
                         Row(verticalAlignment=Alignment.CenterVertically) {
                             Icon(painterResource(R.drawable.ic_marca),null,Modifier.size(30.dp),tint=MaterialTheme.colorScheme.primary)
                             Spacer(Modifier.width(8.dp))
-                            Text("CampusGPS",style=MaterialTheme.typography.headlineSmall,fontWeight=FontWeight.Bold)
+                            Column {
+                                Text("CampusGPS",style=MaterialTheme.typography.headlineSmall,fontWeight=FontWeight.Bold)
+                                Text(CampusTecsup.NOMBRE,style=MaterialTheme.typography.labelSmall,color=MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
                         }
                         Box {
                             IconoCristal(captura,if(oscuro)R.drawable.ic_luna else R.drawable.ic_sol,"Cambiar tema",{ temaAbierto=true },Modifier.size(52.dp))

@@ -16,7 +16,7 @@ Obtener la posición, identificar lugares cercanos y seleccionar uno en el mapa 
 
 ## Operating Context
 
-Laboratorio 13 de Android. Fase 1 funcional en main; fase 2 en mejora-ia. Los cinco lugares de Lima son datos ficticios de la guía. El mapa es real y requiere Internet. La ubicación requiere permiso de Android y Google Play Services.
+Laboratorio 13 de Android. Fase 1 funcional en main; fase 2 en mejora-ia. El centro corresponde a Tecsup Santa Anita y los cinco destinos usan las coordenadas indicadas por Daniella, registradas en docs/CAMPUS.md. El mapa es real y requiere Internet. La ubicación requiere permiso de Android y Google Play Services.
 
 ## Capabilities and Constraints
 

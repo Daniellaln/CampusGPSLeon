@@ -20,4 +20,6 @@ Todos los caminos de código parten de `app/src/main/java/com/leon/campusgps/`.
 
 **9 · Entrega.** README, PROMPTS, capturas y verificación describen la versión comprobada. Para ver qué cambió exactamente, abre Git → Log en Android Studio, elige el commit y usa Show Diff. Para ejecutar una versión anterior, haz Checkout Revision en una copia o vuelve después a mejora-ia.
 
+**10 · Campus real.** `model/CampusTecsup.kt` define el centro inicial y `data/LugaresRepositoryLocal.kt` guarda los cinco destinos indicados por Daniella. [Coordenadas completas](CAMPUS.md). El GPS sigue obteniendo la ubicación real del teléfono.
+
 La arquitectura MVVM se reconoce por model, viewmodel y ui. Los repositorios están en data. Las dependencias de Material 3, ubicación, DataStore y MapLibre están en `app/build.gradle.kts`.

@@ -1,5 +1,7 @@
 {
   "posicion_y_mapa": true,
+  "campus": "Tecsup Santa Anita",
+  "coordenadas_proporcionadas_por": "Daniella Leon",
   "categorias_y_radio": true,
   "seguimiento_actualiza_sin_buscar": true,
   "parada": true,

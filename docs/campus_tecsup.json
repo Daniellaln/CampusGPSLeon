@@ -1,0 +1,41 @@
+{
+  "campus": "Tecsup Santa Anita",
+  "centro": {
+    "latitud": -12.0439002,
+    "longitud": -76.9529147,
+    "fuente": "OpenStreetMap way/357287696"
+  },
+  "fuente_lugares": "Coordenadas facilitadas por Daniella Leon",
+  "lugares": [
+    {
+      "id": 1,
+      "nombre": "Biblioteca",
+      "latitud": -12.044947716677237,
+      "longitud": -76.95291464372102
+    },
+    {
+      "id": 2,
+      "nombre": "Cafetería",
+      "latitud": -12.044048206861511,
+      "longitud": -76.9521813705978
+    },
+    {
+      "id": 3,
+      "nombre": "Laboratorio de Cómputo",
+      "latitud": -12.043717829954366,
+      "longitud": -76.95320316878995
+    },
+    {
+      "id": 4,
+      "nombre": "Auditorio",
+      "latitud": -12.0447880312089,
+      "longitud": -76.95276423232795
+    },
+    {
+      "id": 5,
+      "nombre": "Estacionamiento",
+      "latitud": -12.044383822992161,
+      "longitud": -76.95174238785984
+    }
+  ]
+}

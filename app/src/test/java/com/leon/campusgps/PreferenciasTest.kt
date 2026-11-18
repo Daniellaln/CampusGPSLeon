@@ -33,7 +33,7 @@ class PreferenciasTest {
         runCurrent();primero.seleccionar(2);runCurrent()
         val segundo=MapaViewModel(ubicacion,LugaresRepositoryLocal(),prefs);runCurrent()
         assertEquals(2,segundo.seleccionado.value)
-        assertEquals("Cafetería Campus",segundo.ultimoLugar.value?.nombre)
+        assertEquals("Cafetería",segundo.ultimoLugar.value?.nombre)
     }
     @Test fun unIdAntiguoQueYaNoExisteNoSeRestaura() = runTest(dispatcher) {
         val vm=MapaViewModel(ubicacion,LugaresRepositoryLocal(),PreferenciasEnMemoria(999));runCurrent()

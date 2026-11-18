@@ -8,6 +8,8 @@ La versión base está en [main](https://github.com/Daniellaln/CampusGPSLeon/tre
 
 ## Antes y después
 
+La base conserva los datos de demostración de la guía en el centro de Lima. La versión actual muestra Tecsup Santa Anita con los destinos indicados por Daniella.
+
 <img src="docs/capturas/02_ubicacion_y_distancias.png" width="250" alt="Fase 1: mapa y lista base"> <img src="docs/capturas_fase2/03_mapa_lugares.png" width="250" alt="Fase 2: mapa completo y panel desplegable">
 
 ## Usarla
@@ -16,13 +18,13 @@ Pulsa **Obtener mi ubicación** y acepta el permiso preciso o aproximado. Toca u
 
 **Seguir** actualiza la posición sin repetir la búsqueda. **Detener** conserva el último punto; salir al escritorio retira las actualizaciones. La app recuerda el lugar elegido y permite recuperarlo al abrir. El botón de aspecto ofrece Claro, Oscuro o Del sistema.
 
-Los lugares son ejemplos, no el plano real de una institución. El mapa es real: MapLibre Native/OpenFreeMap con datos de OpenStreetMap. La posición llega de FusedLocationProviderClient. El punto propio es azul; el lugar más cercano, verde. Solo hay seguimiento mientras la app está abierta.
+El mapa está centrado en Tecsup Santa Anita y los cinco destinos usan las coordenadas facilitadas por Daniella. [Ubicaciones y procedencia](docs/CAMPUS.md). El mapa es real: MapLibre Native/OpenFreeMap con datos de OpenStreetMap. La posición llega de FusedLocationProviderClient. El punto propio es azul; el lugar más cercano, verde. Solo hay seguimiento mientras la app está abierta.
 
 ## Abrir el proyecto
 
 Android Studio, JDK 21 y SDK 37. Requiere Android 7.0 o superior y Google Play Services para la ubicación. Sincroniza y ejecuta con Internet; este proveedor no necesita clave de mapas. En Mac, si hace falta, ejecuta `chmod +x gradlew`.
 
-Para probar los lugares de ejemplo, envía `-12.0464, -77.0428` desde los controles de ubicación del emulador.
+Para probar desde el centro del campus, envía `-12.0439002, -76.9529147` desde los controles de ubicación del emulador.
 
 ```shell
 ./gradlew assembleDebug testDebugUnitTest lintDebug
@@ -38,7 +40,7 @@ Todo está en `app/src/main/java/com/leon/campusgps/`:
 | Carpeta | Qué hace |
 |---|---|
 | `model` | Posición, lugares, categorías, tema y estados de pantalla |
-| `data` | Interfaces, Fused Location, lugares de ejemplo y DataStore |
+| `data` | Interfaces, Fused Location, lugares de Tecsup y DataStore |
 | `viewmodel` | Búsqueda, seguimiento, selección, filtros y restauración |
 | `ui` | Mapa, panel nativo, lista, errores y material de cristal |
 | `util` | Distancias y contorno geodésico del radio |

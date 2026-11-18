@@ -14,15 +14,25 @@ import com.leon.campusgps.model.Posicion
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
+import android.location.LocationManager
+import androidx.core.location.LocationManagerCompat
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 
 class UbicacionRepositoryGoogle(context: Context) : UbicacionRepository {
     private val contexto = context.applicationContext
     private val cliente by lazy { LocationServices.getFusedLocationProviderClient(contexto) }
 
+    override fun playServicesDisponible(): Boolean =
+        GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(contexto) == ConnectionResult.SUCCESS
+
     @SuppressLint("MissingPermission")
     override suspend fun obtenerPosicion(): Result<Posicion> {
         val cancelacion = CancellationTokenSource()
         return try {
+            if (!playServicesDisponible()) throw SinPlayServicesException()
+            val manager = contexto.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            if (!LocationManagerCompat.isLocationEnabled(manager)) throw GpsApagadoException()
             val fina = ContextCompat.checkSelfPermission(contexto, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
             val aproximada = ContextCompat.checkSelfPermission(contexto, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
             if (!fina && !aproximada) throw SecurityException("Falta el permiso de ubicación")
@@ -34,7 +44,7 @@ class UbicacionRepositoryGoogle(context: Context) : UbicacionRepository {
                 .build()
             val ubicacion = withTimeoutOrNull(12_000) {
                 cliente.getCurrentLocation(solicitud, cancelacion.token).await()
-            } ?: throw IllegalStateException("Activa el GPS e intenta de nuevo")
+            } ?: throw GpsApagadoException()
             Result.success(Posicion(ubicacion.latitude, ubicacion.longitude))
         } catch (e: CancellationException) {
             // La cancelación de una corrutina no es un fallo del GPS.

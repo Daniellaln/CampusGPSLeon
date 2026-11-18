@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import com.leon.campusgps.util.distanciaMetros
 import android.util.Log
+import com.leon.campusgps.data.GpsApagadoException
+import com.leon.campusgps.data.SinPlayServicesException
 
 class MapaViewModel(
     private val ubicacionRepo: UbicacionRepository,
@@ -37,6 +39,10 @@ class MapaViewModel(
 
     fun buscar() {
         if (_estado.value == UbicacionUi.Buscando) return
+        if (!ubicacionRepo.playServicesDisponible()) {
+            _estado.value = errorDe(SinPlayServicesException())
+            return
+        }
         _estado.value = UbicacionUi.Buscando
         viewModelScope.launch {
             ubicacionRepo.obtenerPosicion()
@@ -50,7 +56,7 @@ class MapaViewModel(
     }
 
     fun permisoDenegado() {
-        _estado.value = UbicacionUi.Error("Sin permiso de ubicación no puedo mostrar dónde estás")
+        _estado.value = UbicacionUi.Error("Sin permiso de ubicación no puedo mostrar dónde estás", TipoError.SIN_PERMISO)
     }
 
     private fun actualizarDistancias(posicion: Posicion) {
@@ -60,7 +66,10 @@ class MapaViewModel(
         Log.d("CampusGPS", _lugares.value.joinToString { "${it.lugar.nombre}: ${it.metros} m" })
     }
 
-    private fun errorDe(e: Throwable) = UbicacionUi.Error(
-        if (e is SecurityException) "Falta el permiso de ubicación" else e.message ?: "No se pudo obtener la ubicación"
-    )
+    private fun errorDe(e: Throwable): UbicacionUi.Error = when (e) {
+        is SecurityException -> UbicacionUi.Error("Sin permiso de ubicación no puedo mostrar dónde estás", TipoError.SIN_PERMISO)
+        is GpsApagadoException -> UbicacionUi.Error("Activa el GPS e intenta de nuevo", TipoError.GPS_APAGADO)
+        is SinPlayServicesException -> UbicacionUi.Error("Este dispositivo no tiene Google Play Services", TipoError.SIN_PLAY_SERVICES)
+        else -> UbicacionUi.Error(e.message ?: "No se pudo obtener la ubicación", TipoError.OTRO)
+    }
 }

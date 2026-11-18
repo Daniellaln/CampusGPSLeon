@@ -2,7 +2,7 @@
 
 Daniella Leon · Laboratorio 13 · Fase 1
 
-Detección del lugar más cercano y resaltado en verde.
+Manejo de permisos denegados, GPS apagado y ausencia de Play Services.
 
 ## Ejecutar
 

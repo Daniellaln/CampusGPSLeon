@@ -70,7 +70,7 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
                     Text("Longitud: ${actual.posicion.longitud}", style = MaterialTheme.typography.bodySmall)
                     }
                 }
-                is UbicacionUi.Error -> Text(actual.mensaje, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(16.dp))
+                is UbicacionUi.Error -> MensajeError(actual, ::alPulsar)
             }
             if (estado !is UbicacionUi.Error) {
             OutlinedButton(colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary), border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary), 

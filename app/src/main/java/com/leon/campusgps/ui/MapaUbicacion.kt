@@ -147,7 +147,7 @@ fun MapaUbicacion(
     LaunchedEffect(mapa, estado, lugares, masCercanoId, seleccionado) {
         val actual = mapa ?: return@LaunchedEffect
         val puntos = JSONArray()
-        val lugaresVisibles = emptyList<LugarConDistancia>()
+        val lugaresVisibles = lugares
         fun agregar(id: Int, lat: Double, lon: Double, color: String) {
             puntos.put(JSONObject().put("type", "Feature")
                 .put("geometry", JSONObject().put("type", "Point").put("coordinates", JSONArray().put(lon).put(lat)))

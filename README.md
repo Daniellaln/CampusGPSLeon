@@ -2,7 +2,7 @@
 
 Daniella Leon · Laboratorio 13 · Fase 1
 
-Mapa y posición del dispositivo.
+Cinco lugares del campus con nombre y categoría.
 
 ## Ejecutar
 

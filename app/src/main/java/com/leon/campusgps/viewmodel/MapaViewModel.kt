@@ -31,6 +31,10 @@ class MapaViewModel(
         _revisionSeleccion.value++
     }
 
+    val masCercano: StateFlow<Lugar?> = lugares.map { lista ->
+        lista.firstOrNull { it.metros != null }?.lugar
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
     fun buscar() {
         if (_estado.value == UbicacionUi.Buscando) return
         _estado.value = UbicacionUi.Buscando

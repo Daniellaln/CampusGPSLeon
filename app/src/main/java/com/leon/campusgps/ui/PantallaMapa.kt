@@ -1,5 +1,6 @@
 package com.leon.campusgps.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -10,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leon.campusgps.model.UbicacionUi
 import com.leon.campusgps.viewmodel.MapaViewModel
+import com.leon.campusgps.util.formatearDistancia
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -24,6 +26,7 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
     val lugares by vm.lugares.collectAsStateWithLifecycle()
     val seleccionado by vm.seleccionado.collectAsStateWithLifecycle()
     val revision by vm.revisionSeleccion.collectAsStateWithLifecycle()
+    val masCercano by vm.masCercano.collectAsStateWithLifecycle()
     val contexto = LocalContext.current
     val lanzador = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { resultado ->
         if (resultado.values.any { it }) vm.buscar() else vm.permisoDenegado()
@@ -49,8 +52,9 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
                 seleccionado = seleccionado,
                 modifier = Modifier.fillMaxWidth().weight(1f),
                 revisionSeleccion = revision,
-                onSeleccionar = vm::seleccionar
-            )
+                onSeleccionar = vm::seleccionar,
+                masCercanoId = masCercano?.id
+            ) else Spacer(Modifier.fillMaxWidth().weight(1f))
             }
             Button(onClick = ::alPulsar, enabled = estado != UbicacionUi.Buscando,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
@@ -68,8 +72,21 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
                 }
                 is UbicacionUi.Error -> Text(actual.mensaje, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(16.dp))
             }
-            if (estado !is UbicacionUi.Error) ListaLugares(lugares, seleccionado, vm::seleccionar,
-                modifier = Modifier.fillMaxWidth().height(if (compacta) 96.dp else 280.dp))
+            if (estado !is UbicacionUi.Error) {
+            OutlinedButton(colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary), border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary), 
+                onClick = { masCercano?.let { vm.seleccionar(it.id) } },
+                enabled = masCercano != null && estado != UbicacionUi.Buscando,
+                modifier = Modifier.padding(top = 2.dp)
+            ) { Text("Ir al más cercano") }
+            masCercano?.let { lugar ->
+                val metros = lugares.firstOrNull { it.lugar.id == lugar.id }?.metros
+                Text("Más cercano: ${lugar.nombre} (${metros?.let(::formatearDistancia) ?: "Sin calcular"})",
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                    style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center)
+            }
+            ListaLugares(lugares, seleccionado, vm::seleccionar,
+                modifier = Modifier.fillMaxWidth().height(if (compacta) 96.dp else 280.dp), masCercanoId = masCercano?.id)
+            }
         }
         }
     }

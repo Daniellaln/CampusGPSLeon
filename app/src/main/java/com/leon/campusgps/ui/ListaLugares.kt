@@ -18,7 +18,7 @@ import com.leon.campusgps.util.formatearDistancia
 
 @Composable
 fun ListaLugares(lugares: List<LugarConDistancia>, seleccionado: Int?, onClick: (Int) -> Unit,
-    modifier: Modifier = Modifier) {
+    modifier: Modifier = Modifier, masCercanoId: Int? = null) {
     LazyColumn(modifier, contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp)) {
         items(lugares, key = { it.lugar.id }) { item ->
@@ -28,7 +28,7 @@ fun ListaLugares(lugares: List<LugarConDistancia>, seleccionado: Int?, onClick: 
                 border = if (elegida) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null) {
                 Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp),
                     verticalAlignment = Alignment.CenterVertically) {
-                    Box(Modifier.size(8.dp).background(Color(0xFF3183C5), CircleShape))
+                    Box(Modifier.size(8.dp).background(if (item.lugar.id == masCercanoId) Color(0xFF289B46) else Color(0xFF3183C5), CircleShape))
                     Spacer(Modifier.width(10.dp))
                     Column(Modifier.weight(1f)) {
                         Text(item.lugar.nombre, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium)

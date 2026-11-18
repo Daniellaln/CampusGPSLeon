@@ -2,7 +2,7 @@
 
 Daniella Leon · Laboratorio 13 · Fase 1
 
-Lista de lugares, selección y cámara del mapa.
+Detección del lugar más cercano y resaltado en verde.
 
 ## Ejecutar
 

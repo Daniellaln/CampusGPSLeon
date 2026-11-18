@@ -1,6 +1,9 @@
 package com.leon.campusgps.ui
 
 import android.graphics.RectF
+import android.animation.ValueAnimator
+import android.os.Build
+import android.provider.Settings
 import android.graphics.Bitmap
 import android.os.SystemClock
 import java.util.concurrent.atomic.AtomicBoolean
@@ -212,7 +215,7 @@ fun MapaUbicacion(
             actual?.cameraPosition?.let { posicion ->
                 posicion.target?.let { latitud = it.latitude; longitud = it.longitude }
                 zoom = posicion.zoom
-                actual?.let(::capturar)
+                capturar(actual)
                 val visibles = actual.queryRenderedFeatures(RectF(0f, 0f, vista.width.toFloat(), vista.height.toFloat()), "campus-puntos").size
                 Log.d("CampusGPSMapa", "Cámara quieta zoom=$zoom, puntos visibles=$visibles")
             }
@@ -283,6 +286,7 @@ fun MapaUbicacion(
                 posicionActual.precisionMetros?.let { accuracy = it }
             })
             puntoAzulActivo = true
+            Log.d("CampusGPSMapa", "Punto nativo activo, precisión=${posicionActual.precisionMetros}")
         } else if (estiloUbicacion != null) {
             actual.locationComponent.isLocationComponentEnabled = false
             puntoAzulActivo = false
@@ -294,14 +298,20 @@ fun MapaUbicacion(
         val actual = mapa ?: return@LaunchedEffect
         if (claveCamara == null || claveCamara == ultimaCamaraAplicada) return@LaunchedEffect
         if (!seguirCamara && seleccionado == null) return@LaunchedEffect
+        val animar = if (Build.VERSION.SDK_INT >= 26) ValueAnimator.areAnimatorsEnabled() else
+            Settings.Global.getFloat(contexto.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) > 0f
+        fun mover(latitud: Double, longitud: Double, zoom: Double) {
+            val cambio = CameraUpdateFactory.newLatLngZoom(LatLng(latitud, longitud), zoom)
+            if (animar) actual.animateCamera(cambio, 500) else actual.moveCamera(cambio)
+        }
         val lugar = lugares.firstOrNull { it.lugar.id == seleccionado }?.lugar
         if (lugar != null) {
-            actual.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lugar.latitud, lugar.longitud), 17.0), 500)
+            mover(lugar.latitud, lugar.longitud, 17.0)
             propioSeleccionado = false
             Log.d("CampusGPSMapa", "Cámara seleccionada id=${lugar.id}, zoom=17")
         } else if (posicionActual != null) {
             idTocado = null; propioSeleccionado = false
-            actual.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(posicionActual.latitud, posicionActual.longitud),16.0),500)
+            mover(posicionActual.latitud, posicionActual.longitud, 16.0)
         }
         ultimaCamaraAplicada = claveCamara
     }

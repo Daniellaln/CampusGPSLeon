@@ -194,7 +194,8 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
 @Composable
 private fun PanelLugares(datos: DatosVista,vm: MapaViewModel,captura: CapturaMapa?,altoMaximo: Dp,
     ubicar: ()->Unit,filtrar: ()->Unit,expandir: ()->Unit,expandida: Boolean) {
-    Column(Modifier.fillMaxWidth().heightIn(max=altoMaximo).navigationBarsPadding().padding(horizontal=20.dp)) {
+    Column(Modifier.fillMaxWidth().heightIn(max=altoMaximo).navigationBarsPadding().padding(horizontal=20.dp)
+        .then(if(datos.posicion==null)Modifier.verticalScroll(rememberScrollState()) else Modifier)) {
         Box(Modifier.fillMaxWidth().height(19.dp),contentAlignment=Alignment.Center) {
             Box(Modifier.width(36.dp).height(4.dp).background(MaterialTheme.colorScheme.outlineVariant,RoundedCornerShape(2.dp)))
         }

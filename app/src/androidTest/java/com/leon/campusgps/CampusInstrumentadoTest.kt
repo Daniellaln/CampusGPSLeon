@@ -14,6 +14,7 @@ import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlinx.coroutines.flow.first
 
 @RunWith(AndroidJUnit4::class)
 class CampusInstrumentadoTest {
@@ -45,7 +46,7 @@ class CampusInstrumentadoTest {
         assertEquals(listOf(1,2,3,4,5),vm.lugares.value.map { it.lugar.id })
         assertTrue(vm.lugares.value.all { it.metros!! > 0 })
         assertTrue(vm.lugares.value.first().metros!! in 70f..110f)
-        pantalla.onNodeWithText("Latitud: -12.0464").assertIsDisplayed()
+        pantalla.onNodeWithText("Ubicación lista").assertIsDisplayed()
     }
     @Test fun masCercanoEstaDeshabilitadoSinUbicacion() {
         mostrar();pantalla.onNodeWithText("Ir al más cercano").assertIsNotEnabled()
@@ -80,6 +81,40 @@ class CampusInstrumentadoTest {
         val repo=Repo();repo.disponible=false;val vm=mostrar(repo);buscar(vm)
         pantalla.onNodeWithText("Este dispositivo no tiene Google Play Services").assertIsDisplayed()
         pantalla.onNodeWithText("Reintentar").assertDoesNotExist()
+    }
+
+    @Test fun filtroYRadioCambianLaMismaListaQueElMapa() {
+        val vm=mostrar();buscar(vm)
+        pantalla.onNodeWithText("Todo · 200 m").performClick()
+        pantalla.onNodeWithText("Estudio").performClick()
+        pantalla.onNodeWithText("100 m").performClick()
+        pantalla.onNodeWithText("Ver lugares").performClick()
+        pantalla.onNodeWithText("2 lugares").assertIsDisplayed()
+        pantalla.onNodeWithText("Cafetería Campus").assertDoesNotExist()
+        pantalla.runOnIdle {
+            assertEquals(100,vm.radio.value)
+            assertEquals(listOf(1,3),vm.lugaresFiltrados.value.map { it.lugar.id })
+            assertTrue(vm.lugaresFiltrados.value.first().dentroDelRadio==true)
+            assertTrue(vm.lugaresFiltrados.value.last().dentroDelRadio==false)
+        }
+    }
+
+    @Test fun hojaSeExpandeParaMostrarLosCincoLugares() {
+        val vm=mostrar();buscar(vm)
+        pantalla.onNodeWithContentDescription("Mostrar todos los lugares").performClick()
+        pantalla.onNodeWithContentDescription("Contraer lugares").assertIsDisplayed()
+        pantalla.onNodeWithText("Estacionamiento Norte").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test fun preferenciasSeCompartenEntreAdaptadoresReales() = kotlinx.coroutines.runBlocking {
+        val contexto=androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().targetContext
+        val primero=PreferenciasDataStore(contexto)
+        primero.guardarUltimoLugar(2)
+        primero.guardarTema(ModoTema.OSCURO)
+        val segundo=PreferenciasDataStore(contexto)
+        assertEquals(2,segundo.ultimoLugarId.first())
+        assertEquals(ModoTema.OSCURO,segundo.modoTema.first())
+        primero.guardarTema(ModoTema.SISTEMA)
     }
 
 }

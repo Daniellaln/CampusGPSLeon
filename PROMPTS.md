@@ -109,3 +109,21 @@ Conserva la última posición al buscar de nuevo para no borrar el círculo ni e
 | Prompt que escribí | Qué respondió Gemini | Qué cambié o descarté | Por qué |
 |---|---|---|---|
 | 6. Diseño | Pendiente de ejecutar en Gemini; implementación de referencia realizada con Codex. | Cristal propio sobre capturas reales, panel mate, iconos vectoriales propios e ilustración generada solo en el inicio. Se corrigieron títulos oscuros y punto tenue tras revisar capturas nativas. | Reduce opciones visibles y mantiene legibilidad y orientación sobre un mapa real. |
+
+## 7. Accesibilidad y comprobación
+
+```text
+Compórtate como un experto en accesibilidad y pruebas de aplicaciones Android con Compose. Ayúdame a cerrar CampusGPS con el diseño del prompt anterior, sin cambiar su composición ni añadir nuevas funciones.
+
+Respeta la opción de quitar animaciones: las animaciones Compose siguen la escala del sistema; antes de mover la cámara nativa consulta ValueAnimator.areAnimatorsEnabled desde API26 y Settings.Global.ANIMATOR_DURATION_SCALE en API24/25. Usa moveCamera cuando esté desactivada y animateCamera de 500 ms cuando esté activa. Esta adaptación pertenece al renderizador, no al ViewModel.
+
+Comprueba texto al 130%, temas claro y oscuro, teléfono vertical y horizontal. El panel debe permitir desplazamiento en estados inicial y de error, el listado conservar su scroll propio y todos los botones medir al menos 48 dp de toque. Títulos y créditos deben heredar colores legibles del tema; los créditos usan 9 sp con lineHeight 12 sp. Conserva descripciones de los botones de icono y semántica de selección/estado en filas. La cámara respeta el espacio del panel; girar no pide permiso de nuevo ni reinicia un seguimiento.
+
+Actualiza CampusInstrumentadoTest a la interfaz final. Verifica resultados visibles y comportamiento: Ir al más cercano deshabilitado antes de ubicarse; elegirlo selecciona Biblioteca; tocar Cafetería selecciona su ID; filtro Estudio y 100 m muestra Biblioteca dentro y Laboratorio fuera; la hoja se expande para alcanzar cinco lugares; errores ofrecen recuperación correcta. Prueba también PreferenciasDataStore real con dos adaptadores sobre el mismo applicationContext y confirma que comparten lugar y tema. Mantén las pruebas unitarias de filtros, radio, cancelación del seguimiento y restauración tardía.
+
+Ejecuta assembleDebug, testDebugUnitTest, lintDebug y connectedDebugAndroidTest. Después instala la app normal y prueba posiciones sucesivas en el emulador, fuerza cierre/reapertura para DataStore, GPS apagado y denegación. Revisa que el log registre retiro del callback al detener y al salir al escritorio. Guarda solo capturas reales: no dibujes una interfaz encima de una imagen. Describe lo probado y limita las conclusiones al dispositivo usado.
+```
+
+| Prompt que escribí | Qué respondió Gemini | Qué cambié o descarté | Por qué |
+|---|---|---|---|
+| 7. Comprobación | Pendiente de ejecutar en Gemini; referencia realizada y probada con Codex. | Cámara sin movimiento cuando el sistema lo pide, panel desplazable, pruebas de lista/hoja y DataStore real. | Permite usar la app con otra orientación o preferencias de accesibilidad y comprueba comportamiento, no solo apariencia. |

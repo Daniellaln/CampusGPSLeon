@@ -19,12 +19,25 @@ class MapaViewModel(
     private val _lugares = MutableStateFlow(lugaresRepo.obtenerLugares().map { LugarConDistancia(it, null) })
     val lugares: StateFlow<List<LugarConDistancia>> = _lugares.asStateFlow()
 
+    private val _seleccionado = MutableStateFlow<Int?>(null)
+    val seleccionado: StateFlow<Int?> = _seleccionado.asStateFlow()
+    private val _revisionSeleccion = MutableStateFlow(0)
+    val revisionSeleccion: StateFlow<Int> = _revisionSeleccion.asStateFlow()
+
+    fun seleccionar(id: Int?) {
+        if (id != null && _lugares.value.none { it.lugar.id == id }) return
+        _seleccionado.value = id
+        // Permite volver al mismo marcador después de desplazar el mapa a mano.
+        _revisionSeleccion.value++
+    }
+
     fun buscar() {
         if (_estado.value == UbicacionUi.Buscando) return
         _estado.value = UbicacionUi.Buscando
         viewModelScope.launch {
             ubicacionRepo.obtenerPosicion()
                 .onSuccess { posicion ->
+                    _seleccionado.value = null
                     actualizarDistancias(posicion)
                     _estado.value = UbicacionUi.Lista(posicion)
                 }

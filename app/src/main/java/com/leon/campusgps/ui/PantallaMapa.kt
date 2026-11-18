@@ -22,6 +22,8 @@ import androidx.core.content.ContextCompat
 fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
     val estado by vm.estado.collectAsStateWithLifecycle()
     val lugares by vm.lugares.collectAsStateWithLifecycle()
+    val seleccionado by vm.seleccionado.collectAsStateWithLifecycle()
+    val revision by vm.revisionSeleccion.collectAsStateWithLifecycle()
     val contexto = LocalContext.current
     val lanzador = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { resultado ->
         if (resultado.values.any { it }) vm.buscar() else vm.permisoDenegado()
@@ -44,8 +46,10 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
             if (mostrarMapa) MapaUbicacion(
                 estado = estado,
                 lugares = lugares,
-                seleccionado = null,
+                seleccionado = seleccionado,
                 modifier = Modifier.fillMaxWidth().weight(1f),
+                revisionSeleccion = revision,
+                onSeleccionar = vm::seleccionar
             )
             }
             Button(onClick = ::alPulsar, enabled = estado != UbicacionUi.Buscando,
@@ -64,6 +68,8 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
                 }
                 is UbicacionUi.Error -> Text(actual.mensaje, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(16.dp))
             }
+            if (estado !is UbicacionUi.Error) ListaLugares(lugares, seleccionado, vm::seleccionar,
+                modifier = Modifier.fillMaxWidth().height(if (compacta) 96.dp else 280.dp))
         }
         }
     }

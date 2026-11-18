@@ -2,7 +2,7 @@
 
 Daniella Leon · Laboratorio 13 · Fase 1
 
-Distancias calculadas y ordenadas desde la posición actual.
+Lista de lugares, selección y cámara del mapa.
 
 ## Ejecutar
 

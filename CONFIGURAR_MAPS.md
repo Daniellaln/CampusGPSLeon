@@ -1,11 +1,10 @@
-# Mapa sin tarjeta
+# Configurar el mapa
 
-Esta variante usa MapLibre Native 13.5.4 y el estilo Liberty de OpenFreeMap, con datos de OpenStreetMap. No necesita cuenta, tarjeta, prepago ni clave de mapas.
+Este proyecto usa MapLibre Native y OpenFreeMap, con datos de OpenStreetMap. No requiere una cuenta de mapas ni una clave de API.
 
-Abre el proyecto, sincroniza Gradle y ejecútalo con Internet. Android Studio crea local.properties con la ruta de tu SDK. Acepta el permiso de ubicación al pulsar el botón.
+Abre el proyecto, sincroniza Gradle y ejecuta con Internet. Android Studio crea local.properties con la ruta del SDK de tu equipo.
 
-La localización conserva FusedLocationProviderClient, que no requiere activar facturación ni obtener una clave de Google Maps. En dispositivos sin Google Play Services se muestra el error previsto por la guía.
+La localización se obtiene con FusedLocationProviderClient y requiere Google Play Services y permiso de ubicación. Este servicio de localización es independiente de Google Maps Platform.
 
-La guía pide específicamente Google Maps Compose. Este cambio de proveedor requiere autorización del profesor; no se presenta como cumplimiento de ese punto. El 18/11/2026 se abandonó el alta de Google Cloud al aparecer un prepago de PEN 100.00.
-
-Fuentes: https://openfreemap.org/quick_start/ y https://maplibre.org/maplibre-native/android/examples/data/rendering-engine/
+Estilo: https://tiles.openfreemap.org/styles/liberty
+Documentación: https://openfreemap.org/quick_start/

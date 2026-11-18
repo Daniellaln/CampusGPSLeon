@@ -1,17 +1,15 @@
-# Variante sin tarjeta
-
-Cambio autorizado por Daniella el 18/11/2026 al aparecer un prepago de S/100 en Google Cloud. MapLibre + OpenFreeMap sustituyen Google Maps Compose; la equivalencia académica está pendiente del profesor.
-
 # CampusGPS
 
-Daniella Leon · Laboratorio 13 · Fase 1 · Avance 2/10.
+Daniella Leon · Laboratorio 13 · Fase 1
 
-Declaré ubicación aproximada y precisa y conecté la clave privada al Manifest mediante manifestPlaceholders.
+Solicitud de ubicación precisa o aproximada durante el uso de la app.
 
-Proyecto reconstruido a partir del código y los contratos de la guía; no se recibió un ZIP base.
-Paquete personalizado: `com.leon.campusgps`. Kotlin, Compose, Material 3 y MVVM con Repository.
+## Ejecutar
 
-Abre esta carpeta en Android Studio. Usa JDK 21 y sincroniza Gradle.
-La clave de Maps se guarda únicamente en `local.properties` como `MAPS_API_KEY=...`.
-No está incluida ni se debe subir a GitHub. La app permite probar la ubicación sin ella;
-el área del mapa indica que falta configurar Google Maps.
+Abre esta carpeta en Android Studio, usa JDK 21, sincroniza Gradle y ejecuta. El mapa necesita Internet. Acepta el permiso al pulsar **Obtener mi ubicación**.
+
+## Tecnologías
+
+Kotlin, Jetpack Compose, Material 3 y MVVM con Repository. MapLibre Native con OpenFreeMap muestra el mapa; FusedLocationProviderClient obtiene la ubicación. No se usa una clave de mapas.
+
+Datos cartográficos: © OpenStreetMap, OpenMapTiles y OpenFreeMap.

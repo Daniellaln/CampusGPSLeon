@@ -20,6 +20,7 @@ class MapaViewModelTest {
         val respuesta: suspend () -> Result<Posicion>) : UbicacionRepository {
         var llamadas = 0
         override fun playServicesDisponible() = disponible
+        override fun observarPosiciones() = kotlinx.coroutines.flow.flow { emit(obtenerPosicion().getOrThrow()) }
         override suspend fun obtenerPosicion(): Result<Posicion> { llamadas++; return respuesta() }
     }
     private fun vm(repo: UbicacionRepository) = MapaViewModel(repo, LugaresRepositoryLocal())

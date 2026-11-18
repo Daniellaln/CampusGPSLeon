@@ -35,3 +35,21 @@ Añade tres chips Material 3 de 100 m, 200 m y 500 m y comunica dentro/fuera tam
 | Prompt que escribí | Qué respondió Gemini | Qué cambié o descarté | Por qué |
 |---|---|---|---|
 | 2. Radio | Pendiente de ejecutar en Gemini; referencia disponible en este commit. | Contorno geodésico y distancias en util/ViewModel; representación Polygon en MapLibre. | Los grados de latitud y longitud no son metros; el mapa y la lista comparten el radio. |
+
+## 3. Seguimiento en vivo
+
+```text
+Compórtate como un experto en Kotlin Flow, ubicación Android y arquitectura MVVM. Ayúdame a incorporar seguimiento en vivo a CampusGPS después de categorías y radio.
+
+Amplía UbicacionRepository con observarPosiciones(): Flow<Posicion>. Implementa callbackFlow en UbicacionRepositoryGoogle, registrando requestLocationUpdates de FusedLocationProviderClient, intervalo de 3 segundos y mínimo de 2 segundos/2 metros. Respeta FINE o COARSE; usa precisión equilibrada si solo hay permiso aproximado. Antes de registrar comprueba permiso, GPS y Google Play Services.
+
+Usa awaitClose para retirar el LocationCallback al cancelar. Si la tarea de registro termina después de haberse cancelado el Flow, retira también ese callback en addOnSuccessListener. Propaga fallos mediante close(error), sin convertir CancellationException en un error de GPS.
+
+El ViewModel debe tener iniciarSeguimiento y detenerSeguimiento, un StateFlow de seguimiento activo y como máximo un Job de ubicación. Cada posición actualiza distancias, orden y cercano. Conserva la última posición al detener. Si no llega el primer punto en 15 segundos, termina la espera con un error recuperable. No hagas seguimiento en segundo plano ni solicites permiso background.
+
+Pon botones Iniciar/Detener en la UI y pide permiso con el lanzador existente. Observa ProcessLifecycleOwner para detener al ir al fondo, preservando una rotación breve. Usa el ViewModel sin Context. Prueba inicio duplicado, cancelación, dos posiciones sucesivas y timeout; después camina en los controles del emulador y comprueba que cambie la lista sin pulsar Buscar.
+```
+
+| Prompt que escribí | Qué respondió Gemini | Qué cambié o descarté | Por qué |
+|---|---|---|---|
+| 3. Seguimiento | Pendiente de ejecutar en Gemini; referencia disponible en este commit. | Se limpia el callback incluso si el registro termina después de cancelar; se detiene en foreground lifecycle. Retiré Log de Android del ViewModel al detectar que impedía probar el Flow en la JVM. | Evita suscripciones duplicadas y ubicación en segundo plano, y reduce dependencias de Android en el ViewModel. |

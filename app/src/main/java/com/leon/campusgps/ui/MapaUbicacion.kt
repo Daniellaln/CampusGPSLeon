@@ -182,7 +182,7 @@ fun MapaUbicacion(
         mapa?.style?.getSourceAs<GeoJsonSource>("radio-datos")?.setGeoJson(geojson)
     }
 
-    LaunchedEffect(mapa, estado) {
+    LaunchedEffect(mapa, estado, revisionSeleccion) {
         val actual = mapa ?: return@LaunchedEffect
         if (estado is UbicacionUi.Lista && seleccionado == null) {
             idTocado = null

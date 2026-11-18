@@ -21,6 +21,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.ProcessLifecycleOwner
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,18 +33,34 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
     val categoria by vm.categoria.collectAsStateWithLifecycle()
     val radio by vm.radio.collectAsStateWithLifecycle()
     val contorno by vm.contornoRadio.collectAsStateWithLifecycle()
+    val seguimiento by vm.seguimiento.collectAsStateWithLifecycle()
+    var seguirTrasPermiso by remember { mutableStateOf(false) }
     val seleccionado by vm.seleccionado.collectAsStateWithLifecycle()
     val revision by vm.revisionSeleccion.collectAsStateWithLifecycle()
     val masCercano by vm.masCercano.collectAsStateWithLifecycle()
     val contexto = LocalContext.current
     val lanzador = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { resultado ->
-        if (resultado.values.any { it }) vm.buscar() else vm.permisoDenegado()
+        if (resultado.values.any { it }) {
+            if (seguirTrasPermiso) vm.iniciarSeguimiento() else vm.buscar()
+        } else vm.permisoDenegado()
+        seguirTrasPermiso = false
     }
     fun alPulsar() {
         val fina = ContextCompat.checkSelfPermission(contexto, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
         val aproximada = ContextCompat.checkSelfPermission(contexto, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        if (fina || aproximada) vm.buscar()
+        if (fina || aproximada) {
+            if (seguirTrasPermiso) vm.iniciarSeguimiento() else vm.buscar()
+            seguirTrasPermiso = false
+        }
         else lanzador.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
+    }
+    DisposableEffect(vm) {
+        val ciclo = ProcessLifecycleOwner.get().lifecycle
+        val observador = LifecycleEventObserver { _, evento ->
+            if (evento == Lifecycle.Event.ON_STOP) vm.detenerSeguimiento()
+        }
+        ciclo.addObserver(observador)
+        onDispose { ciclo.removeObserver(observador) }
     }
     Scaffold(topBar = {
         TopAppBar(title = { Text("CampusGPS") }, colors = TopAppBarDefaults.topAppBarColors(
@@ -74,6 +93,10 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
                 Text(if (estado == UbicacionUi.Buscando) "Buscando…" else "Obtener mi ubicación")
             }
+            TextButton(onClick = {
+                if (seguimiento) vm.detenerSeguimiento()
+                else { seguirTrasPermiso = true; alPulsar() }
+            }) { Text(if (seguimiento) "Detener seguimiento" else "Iniciar seguimiento") }
             when (val actual = estado) {
                 UbicacionUi.Inicial -> Text("Pulsa el botón para empezar", style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(4.dp))

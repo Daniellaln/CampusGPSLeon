@@ -23,6 +23,7 @@ class CampusInstrumentadoTest {
         var fallo: Exception?=null
         var disponible=true
         override fun playServicesDisponible()=disponible
+        override fun observarPosiciones() = kotlinx.coroutines.flow.flow { emit(obtenerPosicion().getOrThrow()) }
         override suspend fun obtenerPosicion(): Result<Posicion> = fallo?.let { Result.failure(it) } ?: Result.success(posicion)
     }
     private fun mostrar(repo: Repo=Repo()): MapaViewModel {

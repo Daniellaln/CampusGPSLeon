@@ -7,10 +7,12 @@ import com.leon.campusgps.data.UbicacionRepository
 import com.leon.campusgps.model.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.CancellationException
 import com.leon.campusgps.util.distanciaMetros
 import com.leon.campusgps.util.contornoDelRadio
 import com.leon.campusgps.util.estaDentroDelRadio
-import android.util.Log
 import com.leon.campusgps.data.GpsApagadoException
 import com.leon.campusgps.data.SinPlayServicesException
 
@@ -18,6 +20,12 @@ class MapaViewModel(
     private val ubicacionRepo: UbicacionRepository,
     private val lugaresRepo: LugaresRepository
 ) : ViewModel() {
+    private var seguimientoJob: Job? = null
+    private var esperaInicialJob: Job? = null
+    private var ultimaPosicion: Posicion? = null
+    private var generacionSeguimiento = 0
+    private val _seguimiento = MutableStateFlow(false)
+    val seguimiento: StateFlow<Boolean> = _seguimiento.asStateFlow()
     private val _estado = MutableStateFlow<UbicacionUi>(UbicacionUi.Inicial)
     val estado: StateFlow<UbicacionUi> = _estado.asStateFlow()
     private val _lugares = MutableStateFlow(lugaresRepo.obtenerLugares().map { LugarConDistancia(it, null) })
@@ -60,6 +68,7 @@ class MapaViewModel(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     fun buscar() {
+        if (_seguimiento.value) { seleccionar(null); return }
         if (_estado.value == UbicacionUi.Buscando) return
         if (!ubicacionRepo.playServicesDisponible()) {
             _estado.value = errorDe(SinPlayServicesException())
@@ -69,12 +78,56 @@ class MapaViewModel(
         viewModelScope.launch {
             ubicacionRepo.obtenerPosicion()
                 .onSuccess { posicion ->
+                    ultimaPosicion = posicion
                     _seleccionado.value = null
                     actualizarDistancias(posicion)
                     _estado.value = UbicacionUi.Lista(posicion)
                 }
                 .onFailure { _estado.value = errorDe(it) }
         }
+    }
+
+    fun iniciarSeguimiento() {
+        if (_seguimiento.value) return
+        if (!ubicacionRepo.playServicesDisponible()) { _estado.value = errorDe(SinPlayServicesException()); return }
+        _seleccionado.value = null
+        _seguimiento.value = true
+        _estado.value = UbicacionUi.Buscando
+        val generacion = ++generacionSeguimiento
+        seguimientoJob = viewModelScope.launch {
+            try {
+                ubicacionRepo.observarPosiciones().collect { posicion ->
+                    ultimaPosicion = posicion
+                    actualizarDistancias(posicion)
+                    _estado.value = UbicacionUi.Lista(posicion)
+                    esperaInicialJob?.cancel()
+                }
+            } catch (cancelacion: CancellationException) { throw cancelacion }
+            catch (error: Exception) { _estado.value = errorDe(error) }
+            finally {
+                if (generacion == generacionSeguimiento) {
+                    _seguimiento.value = false
+                    esperaInicialJob?.cancel()
+                }
+            }
+        }
+        esperaInicialJob = viewModelScope.launch {
+            delay(15_000)
+            if (generacion == generacionSeguimiento && _seguimiento.value && _estado.value == UbicacionUi.Buscando) {
+                seguimientoJob?.cancel()
+                _seguimiento.value = false
+                _estado.value = errorDe(com.leon.campusgps.data.PosicionNoDisponibleException())
+            }
+        }
+    }
+
+    fun detenerSeguimiento() {
+        generacionSeguimiento++
+        seguimientoJob?.cancel()
+        esperaInicialJob?.cancel()
+        _seguimiento.value = false
+        if (_estado.value == UbicacionUi.Buscando)
+            _estado.value = ultimaPosicion?.let { UbicacionUi.Lista(it) } ?: UbicacionUi.Inicial
     }
 
     fun permisoDenegado() {
@@ -85,7 +138,6 @@ class MapaViewModel(
         _lugares.value = lugaresRepo.obtenerLugares()
             .map { LugarConDistancia(it, distanciaMetros(posicion, it)) }
             .sortedBy { it.metros }
-        Log.d("CampusGPS", _lugares.value.joinToString { "${it.lugar.nombre}: ${it.metros} m" })
     }
 
     private fun errorDe(e: Throwable): UbicacionUi.Error = when (e) {

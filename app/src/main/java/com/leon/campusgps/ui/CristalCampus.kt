@@ -44,6 +44,7 @@ uniform float2 escala;
 uniform float radio;
 uniform float borde;
 uniform float fuerza;
+uniform float difusion;
 uniform float noche;
 uniform float mate;
 uniform float activo;
@@ -57,19 +58,24 @@ half4 main(float2 p) {
     tinte = mix(tinte,half3(.13,.61,.49),half(activo * .14));
     if (mate > .75 && d < -borde) return half4(tinte * .965,.965);
     float2 muestra = (origen + p - n * (e*e*fuerza)) * escala;
-    float2 paso = escala * .8;
-    half4 base = fondo.eval(muestra) * .6;
-    base += fondo.eval(muestra + float2(paso.x,0.0)) * .1;
-    base += fondo.eval(muestra - float2(paso.x,0.0)) * .1;
-    base += fondo.eval(muestra + float2(0.0,paso.y)) * .1;
-    base += fondo.eval(muestra - float2(0.0,paso.y)) * .1;
+    float2 paso = escala * difusion;
+    half4 base = fondo.eval(muestra) * .2;
+    base += fondo.eval(muestra + float2(paso.x,0.0)) * .12;
+    base += fondo.eval(muestra - float2(paso.x,0.0)) * .12;
+    base += fondo.eval(muestra + float2(0.0,paso.y)) * .12;
+    base += fondo.eval(muestra - float2(0.0,paso.y)) * .12;
+    base += fondo.eval(muestra + paso) * .08;
+    base += fondo.eval(muestra - paso) * .08;
+    base += fondo.eval(muestra + float2(paso.x,-paso.y)) * .08;
+    base += fondo.eval(muestra + float2(-paso.x,paso.y)) * .08;
     base.r = mix(base.r, fondo.eval(muestra + n*escala*e*1.2).r, half(e*.35));
     base.b = mix(base.b, fondo.eval(muestra - n*escala*e*1.2).b, half(e*.35));
     half3 color = mix(base.rgb,tinte,half(.17 + mate*.68));
     float luz = .25 + .65 * max(dot(n,normalize(float2(-1.0,-1.3))),0.0);
     float reflejo = (1.0-smoothstep(.0,1.5,abs(d+1.2))) * luz;
     color = min(color + half3(reflejo*.65),half3(1.0));
-    half alpha = half(min(.97,.22+mate*.7+e*.58));
+    // El mapa ya forma parte del muestreo; no mezclar otra vez sus letras nítidas.
+    half alpha = .97;
     return half4(color*alpha,alpha);
 }
 """
@@ -107,6 +113,7 @@ fun SuperficieCristal(
                 s.setFloatUniform("radio",redondeo)
                 s.setFloatUniform("borde",14.dp.toPx())
                 s.setFloatUniform("fuerza",8.dp.toPx())
+                s.setFloatUniform("difusion",8.dp.toPx())
                 s.setFloatUniform("noche",if(oscuro)1f else 0f)
                 s.setFloatUniform("mate",mate)
                 s.setFloatUniform("activo",if(activo)1f else 0f)

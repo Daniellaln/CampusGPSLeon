@@ -1,32 +1,25 @@
 # Verificación de CampusGPS
 
-18 de noviembre de 2026. Windows, JDK 21, Pixel_8_Pro_2 con Android 17/API 37.
+18 de noviembre de 2026. Windows, JDK 21 y emulador Pixel_8_Pro_2 con Android 17/API 37.
 
-## Comprobado
+## Fase 2
 
-APK debug compilado. Lint sin errores. 15 pruebas unitarias y 9 instrumentadas correctas.
+`assembleDebug`, `testDebugUnitTest`, `lintDebug` y `connectedDebugAndroidTest` finalizaron correctamente. Son 29 pruebas unitarias y 12 pruebas instrumentadas, sin fallos. Los resultados JUnit y el resumen de lint están en [pruebas_fase2](pruebas_fase2).
 
-El recorrido adicional usó la app normal: permisos de Android, FusedLocationProviderClient y un mapa descargado de OpenFreeMap. Las pruebas de interfaz aisladas usan repositorios de prueba y no cargan el mapa.
+Las pruebas instrumentadas aíslan la pantalla del mapa y del GPS con repositorios controlados. También verifican dos adaptadores reales sobre el mismo DataStore. El recorrido adicional usa la app normal, Fused Location y el mapa descargado de OpenFreeMap.
 
-| Caso | Resultado |
-|---|---|
-| Primer inicio y permiso nativo | Correcto |
-| Aceptar permiso y ver coordenadas y posición roja | Correcto |
-| Denegar permiso y ofrecer Abrir ajustes | Correcto |
-| Cinco lugares en el mapa | Correcto en MapLibre |
-| Tocar marcador y ver nombre y categoría | Correcto: Cafetería Campus / Comida |
-| Lista ordenada, metros y kilómetros | Correcto; km cubierto por pruebas de formato |
-| Seleccionar tarjeta y centrar cámara | Correcto |
-| Ir al más cercano y resaltarlo en verde | Correcto |
-| Cambiar ubicación y actualizar orden y cercano | Correcto; Auditorio a 0 m |
-| GPS apagado y Reintentar | Correcto |
-| Rotación sin perder ubicación, lista y selección | Correcto |
-| Archivos privados fuera del repositorio | Revisado antes de publicar |
+Se comprobaron permiso nativo, posición y distancias, categorías compartidas entre mapa/lista, radio de 100/200/500 metros, selección y lugar más cercano. Se enviaron posiciones distintas sin pulsar Buscar para verificar seguimiento; el registro confirma alta y retirada de callbacks.
 
-El caso sin Play Services se comprobó con repositorios de prueba. No se utilizó otro emulador sin GMS. Los lugares son ejemplos fijos de la guía; las posiciones de prueba se enviaron con los controles del emulador.
+El último lugar reaparece tras un force-stop y una nueva apertura. Se comprobaron claro/oscuro, texto al 130%, giro real a horizontal, GPS apagado y recuperación. Salir al escritorio detiene el seguimiento. Los mensajes de permiso/GPS/Play Services también están cubiertos por las pruebas de pantalla.
 
-La implementación del mapa usa MapLibre/OpenFreeMap. Estos resultados no verifican Google Maps Compose ni una autorización de Google Cloud.
+El material AGSL refracta capturas del mapa en API33 o superior; el emulador no registró errores de shader. Versiones anteriores usan la alternativa translúcida. El punto de ubicación nativo recibe precisión real, y un círculo GeoJSON refuerza su visibilidad en renderizadores que omiten iconos bitmap.
 
-## Evidencias
+## Alcance
 
-Diez capturas reales en capturas/. En pruebas/ están los resultados JUnit, la ejecución instrumentada, el recorrido de la app y el registro del mapa. La compilación de cada avance se comprueba antes de su commit; no se modifican las fechas de Git.
+No se probó en un dispositivo físico ni en API24. Las posiciones de las capturas se enviaron desde los controles del emulador. Los lugares son ficticios. El mapa necesita Internet y la ubicación requiere Google Play Services. La alternativa anterior a API33 está en código, no tiene una captura de otro emulador.
+
+Las capturas finales usan aceleración Hardware del emulador. Con SwiftShader faltaban los rótulos; al usar la GPU del equipo aparecieron, conservando MapLibre OpenGL 13.5.4. Si ocurre en otro emulador, revisa Graphics Hardware/Automatic y haz Cold Boot. La [incidencia oficial de MapLibre](https://github.com/maplibre/maplibre-native/issues/3648) describe este problema con emuladores. La configuración de hardware de un equipo no forma parte del proyecto entregado.
+
+La guía menciona Google Maps Compose; esta implementación usa MapLibre/OpenFreeMap por decisión de la usuaria. Estas pruebas comprueban ese proveedor y no certifican uso de las APIs de Google Maps ni aprobación del cambio por el docente.
+
+La fase 1 y sus evidencias permanecen en main. Cada avance de mejora-ia se compiló y probó antes de publicarse, con fechas reales. Las respuestas de Gemini no se han inventado: PROMPTS.md distingue reproducción e implementación de referencia.

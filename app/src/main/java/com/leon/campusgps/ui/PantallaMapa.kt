@@ -174,7 +174,7 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
             contenidoMapa()
             SuperficieCristal(captura,Modifier.align(Alignment.CenterEnd).statusBarsPadding().navigationBarsPadding()
                 .padding(top=12.dp,end=16.dp,bottom=12.dp).width(anchoPanel).fillMaxHeight(),mate=.94f) {
-                PanelLugares(datos,vm,captura,altoVentana-100.dp,{ ubicar() },{ filtros=true },{},true)
+                PanelLugares(datos,vm,captura,altoVentana-100.dp,{ ubicar() },{ filtros=true },{},true,desplegable=false)
             }
             SnackbarHost(avisos,Modifier.align(Alignment.BottomStart).padding(16.dp))
         } else {
@@ -193,16 +193,16 @@ fun PantallaMapa(vm: MapaViewModel, mostrarMapa: Boolean = true) {
 
 @Composable
 private fun PanelLugares(datos: DatosVista,vm: MapaViewModel,captura: CapturaMapa?,altoMaximo: Dp,
-    ubicar: ()->Unit,filtrar: ()->Unit,expandir: ()->Unit,expandida: Boolean) {
+    ubicar: ()->Unit,filtrar: ()->Unit,expandir: ()->Unit,expandida: Boolean,desplegable: Boolean=true) {
     Column(Modifier.fillMaxWidth().heightIn(max=altoMaximo).navigationBarsPadding().padding(horizontal=20.dp)
         .then(if(datos.posicion==null)Modifier.verticalScroll(rememberScrollState()) else Modifier)) {
-        Box(Modifier.fillMaxWidth().height(19.dp),contentAlignment=Alignment.Center) {
+        if(desplegable) Box(Modifier.fillMaxWidth().height(19.dp),contentAlignment=Alignment.Center) {
             Box(Modifier.width(36.dp).height(4.dp).background(MaterialTheme.colorScheme.outlineVariant,RoundedCornerShape(2.dp)))
-        }
-        Row(Modifier.fillMaxWidth().heightIn(min=48.dp).clickable(onClick=expandir),verticalAlignment=Alignment.CenterVertically) {
+        } else Spacer(Modifier.height(16.dp))
+        Row(Modifier.fillMaxWidth().heightIn(min=48.dp).then(if(desplegable)Modifier.clickable(onClick=expandir) else Modifier),verticalAlignment=Alignment.CenterVertically) {
             Text("Cerca de ti",style=MaterialTheme.typography.titleLarge,fontWeight=FontWeight.Bold,modifier=Modifier.weight(1f))
             Text("${datos.lugares.size} lugares",style=MaterialTheme.typography.labelLarge,color=MaterialTheme.colorScheme.onSurfaceVariant)
-            IconButton(onClick=expandir) { Icon(painterResource(R.drawable.ic_abajo),if(expandida)"Contraer lugares" else "Mostrar todos los lugares",Modifier.size(20.dp).rotate(if(expandida)0f else 180f)) }
+            if(desplegable) IconButton(onClick=expandir) { Icon(painterResource(R.drawable.ic_abajo),if(expandida)"Contraer lugares" else "Mostrar todos los lugares",Modifier.size(20.dp).rotate(if(expandida)0f else 180f)) }
         }
         if(datos.estado is UbicacionUi.Error) {
             MensajeError(datos.estado,ubicar)

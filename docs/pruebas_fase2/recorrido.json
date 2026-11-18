@@ -1,0 +1,10 @@
+{
+  "posicion_y_mapa": true,
+  "categorias_y_radio": true,
+  "seguimiento_actualiza_sin_buscar": true,
+  "parada": true,
+  "datastore_reapertura": true,
+  "tema_oscuro": true,
+  "rotacion_conserva_estado": true,
+  "salir_detiene_seguimiento": true
+}

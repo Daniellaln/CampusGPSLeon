@@ -127,3 +127,41 @@ Ejecuta assembleDebug, testDebugUnitTest, lintDebug y connectedDebugAndroidTest.
 | Prompt que escribí | Qué respondió Gemini | Qué cambié o descarté | Por qué |
 |---|---|---|---|
 | 7. Comprobación | Pendiente de ejecutar en Gemini; referencia realizada y probada con Codex. | Cámara sin movimiento cuando el sistema lo pide, panel desplazable, pruebas de lista/hoja y DataStore real. | Permite usar la app con otra orientación o preferencias de accesibilidad y comprueba comportamiento, no solo apariencia. |
+
+## 8. Legibilidad del mapa y panel lateral
+
+```text
+Compórtate como un experto en MapLibre Native y adaptación de interfaces Android. Ayúdame a corregir dos detalles del diseño de CampusGPS sin cambiar las funciones ni la dirección verde agua y cristal.
+
+Conserva org.maplibre.gl:android-sdk-opengl:13.5.4, el proveedor gratuito y los estilos reales de OpenFreeMap. Si el emulador no dibuja los textos, configura su apartado Graphics en Hardware o Automatic y haz Cold Boot. En esta referencia los rótulos reaparecieron usando la GPU del equipo; no alteres las capturas ni inventes nombres encima. La incidencia oficial maplibre/maplibre-native#3648 describe un problema de textos con OpenGL y emuladores. Comprueba el resultado real antes de atribuirlo al código.
+
+Al cargar el estilo oscuro en MapaUbicacion, aumenta contraste de las capas reales: BackgroundLayer #10221C; edificios FillLayer #294338 con contorno #3B5B4D; agua #143C44; vías highway/road LineLayer #527564 y casing #203C30; SymbolLayer texto #D7EBE0 con halo #10221C de 1.2. Respeta geometrías y reglas de visibilidad del estilo. Comprueba que los nombres de calles se ven realmente en claro y oscuro con el mismo encuadre.
+
+En PantallaMapa distingue la hoja inferior desplegable del panel lateral persistente. Añade a PanelLugares un parámetro desplegable=true y pásalo como false en horizontal/ancho. En lateral elimina tirador, flecha, clickable del encabezado y descripciones de expandir/contraer. Conserva encabezado, contador, lista desplazable, ubicación y acciones. En vertical mantén arrastre, flecha y Back para contraer.
+
+Protege las etiquetas dentro del cristal cuando haya nombres de calles detrás: en el shader usa nueve muestras (centro .20, cuatro ejes .12 cada uno y cuatro diagonales .08 cada una), difusión de 8dp y alfa de salida .97. La transparencia óptica viene del mapa real muestreado; no mezcles otra vez ese resultado con letras nítidas del fondo. Conserva refracción y reflejos. En ListaLugares reserva 64dp para la distancia alineada al final y 12dp de margen al nombre, con máximo dos líneas.
+
+Compila, prueba y recaptura las mismas vistas: teléfono claro, oscuro, texto 130%, horizontal, inicio y filtros. Comprueba la apariencia sobre mapa cargado, no durante una transición. No añadas adornos ni cambies la composición fuera de estas correcciones de legibilidad.
+```
+
+| Prompt que escribí | Qué respondió Gemini | Qué cambié o descarté | Por qué |
+|---|---|---|---|
+| 8. Legibilidad | Pendiente de ejecutar en Gemini; corrección de referencia realizada con Codex tras revisión visual. | Configuración gráfica del emulador para ver rótulos reales, contraste del mapa oscuro y retirada de controles sin acción en lateral. | Los rótulos cartográficos y las acciones honestas son necesarios para orientarse. |
+
+## 9. Documentación y entrega
+
+```text
+Compórtate como un experto en documentación de proyectos Android para una estudiante. Ayúdame a ordenar la entrega final de CampusGPS, con lenguaje breve, claro y sin frases de publicidad. No cambies la app ni la rama main.
+
+Actualiza README.md para la fase 2 en mejora-ia. Describe cómo localizarse, filtrar categoría/radio, seguir/detener, recuperar el último lugar y cambiar tema. Incluye ejecución con JDK21/SDK37, estructura model/data/viewmodel/ui/util y cinco respuestas cortas de reflexión sobre Repository, permisos frente a claves, secretos, distancias y denegación. No inventes usuarios ni autenticación: no existen en esta app.
+
+Muestra una comparación de fase 1 y fase 2 con capturas reales una al lado de la otra. Usa docs/capturas/02_ubicacion_y_distancias.png para la base y docs/capturas_fase2/03_mapa_lugares.png para la mejora. Después organiza inicio, permiso, filtros, radio, seguimiento, reapertura, oscuro, texto grande, horizontal y error GPS desde docs/capturas_fase2. No uses mockups generados como evidencia ni tapes fallos con imágenes.
+
+Mantén PROMPTS.md como guía única, con estos nueve bloques en orden y una tabla de prompt, respuesta de Gemini, adaptación y motivo. El título es Prompts y la introducción: Estos prompts se pueden utilizar uno por uno siguiendo este orden para replicar los resultados. Si todavía no se ejecutaron en Gemini, indícalo y no fabriques respuestas. Todos los recursos deben encontrarse en esta repo: imágenes en app/src/main/res/drawable-nodpi, vectores en drawable, originales en docs/recursos. No remitas a carpetas privadas del PC ni a descargas inexistentes.
+
+Documenta pruebas ejecutadas y sus límites en docs/VERIFICACION.md; deja la guía de archivos por avance en docs/GUIA_CODIGO.md y los tokens de diseño en DESIGN.md y .impeccable/design.json. Conserva la procedencia de la ilustración. Verifica enlaces, archivos necesarios y ausencia de .git, cachés, local.properties o claves en las carpetas de entrega. No garantices un porcentaje exacto de reproducción por otro modelo; el código, las capturas, recursos y especificaciones concretas son la referencia.
+```
+
+| Prompt que escribí | Qué respondió Gemini | Qué cambié o descarté | Por qué |
+|---|---|---|---|
+| 9. Entrega | Pendiente de ejecutar en Gemini; documentación de referencia preparada con Codex. | Una guía ordenada, recursos dentro de la repo, comparación real y comprobaciones con límites explícitos. | Cualquier persona puede seguir el proceso sin acceder al equipo de Daniella. |

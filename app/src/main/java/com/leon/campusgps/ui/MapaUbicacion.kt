@@ -55,6 +55,8 @@ import org.maplibre.android.style.expressions.Expression.get
 import org.maplibre.android.style.layers.CircleLayer
 import org.maplibre.android.style.layers.FillLayer
 import org.maplibre.android.style.layers.LineLayer
+import org.maplibre.android.style.layers.SymbolLayer
+import org.maplibre.android.style.layers.BackgroundLayer
 import org.maplibre.android.style.layers.PropertyFactory.*
 import org.maplibre.android.style.sources.GeoJsonSource
 import org.json.JSONArray
@@ -194,6 +196,16 @@ fun MapaUbicacion(
             }
             }
             actual.setStyle(Style.Builder().fromUri(if (oscuro) ESTILO_OSCURO else ESTILO_LIBRE)) { estilo ->
+                if (oscuro) estilo.layers.forEach { capa ->
+                    when {
+                        capa is BackgroundLayer -> capa.setProperties(backgroundColor("#10221C"))
+                        capa is FillLayer && capa.id.contains("building") -> capa.setProperties(fillColor("#294338"),fillOutlineColor("#3B5B4D"))
+                        capa is FillLayer && capa.id == "water" -> capa.setProperties(fillColor("#143C44"))
+                        capa is LineLayer && (capa.id.startsWith("highway") || capa.id.startsWith("road")) ->
+                            capa.setProperties(lineColor(if(capa.id.contains("casing"))"#203C30" else "#527564"))
+                        capa is SymbolLayer -> capa.setProperties(textColor("#D7EBE0"),textHaloColor("#10221C"),textHaloWidth(1.2f))
+                    }
+                }
                 estilo.addSource(GeoJsonSource("radio-datos", "{\"type\":\"FeatureCollection\",\"features\":[]}"))
                 estilo.addLayer(FillLayer("radio-relleno", "radio-datos").withProperties(fillColor("#168B7A"), fillOpacity(.085f)))
                 estilo.addLayer(LineLayer("radio-borde", "radio-datos").withProperties(lineColor("#168B7A"), lineWidth(1.5f), lineOpacity(.7f)))
